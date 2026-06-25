@@ -11,6 +11,10 @@
 
 namespace esp_brookesia::systems::phone {
 
+/*
+ * This is the top bar of the "phone", which contains the battery, wifi, and
+ * clock.
+ */
 constexpr StatusBar::AreaData
 STYLESHEET_410_502_DARK_STATUS_BAR_AREA_DATA(int w_percent,
                                              StatusBar::AreaAlign align) {
@@ -23,34 +27,42 @@ STYLESHEET_410_502_DARK_STATUS_BAR_AREA_DATA(int w_percent,
 }
 
 constexpr StatusBar::Data STYLESHEET_410_502_DARK_STATUS_BAR_DATA = {
-    .main = {
-        .size = gui::StyleSize::RECT_PERCENT(100, 10),
-        .size_min = gui::StyleSize::RECT_W_PERCENT(100, 24),
-        .size_max = gui::StyleSize::RECT_W_PERCENT(100, 50),
-        .background_color = gui::StyleColor::COLOR_WITH_OPACITY(0, 0),
-        .text_font = gui::StyleFont::HEIGHT_PERCENT(60),
-        .text_color = gui::StyleColor::COLOR(STYLESHEET_410_512_DARK_CORE_DISPLAY_ACCENT_COLOR),
-    },
-    .area = {
-        .num = 3,
-        .data = {
-            STYLESHEET_410_502_DARK_STATUS_BAR_AREA_DATA(30, StatusBar::AreaAlign::START),
-            STYLESHEET_410_502_DARK_STATUS_BAR_AREA_DATA(40, StatusBar::AreaAlign::CENTER),
-            STYLESHEET_410_502_DARK_STATUS_BAR_AREA_DATA(30, StatusBar::AreaAlign::END),
+    .main =
+        {
+            .size = gui::StyleSize::RECT_PERCENT(100, 10),
+            .size_min = gui::StyleSize::RECT_W_PERCENT(100, 24),
+            .size_max = gui::StyleSize::RECT_W_PERCENT(100, 50),
+            .background_color = gui::StyleColor::COLOR_WITH_OPACITY(0, 0),
+            .text_font = gui::StyleFont::HEIGHT_PERCENT(60),
+            .text_color = gui::StyleColor::COLOR(
+                STYLESHEET_410_512_DARK_CORE_DISPLAY_ACCENT_COLOR),
         },
-    },
+    .area =
+        {
+            .num = 3,
+            .data =
+                {
+                    STYLESHEET_410_502_DARK_STATUS_BAR_AREA_DATA(
+                        30, StatusBar::AreaAlign::START),
+                    STYLESHEET_410_502_DARK_STATUS_BAR_AREA_DATA(
+                        40, StatusBar::AreaAlign::CENTER),
+                    STYLESHEET_410_502_DARK_STATUS_BAR_AREA_DATA(
+                        30, StatusBar::AreaAlign::END),
+                },
+        },
     .icon_common_size = gui::StyleSize::SQUARE_PERCENT(60),
+    // TODO: different colors? probably cooler to have a basic palette to reuse (primary, secondary, accent, alert, danger...)
     .battery = {
         .area_index = 2,
         .icon_data = {
             .icon = {
                 .image_num = 5,
                 .images = {
-                    gui::StyleImage::IMAGE_RECOLOR_WHITE(&esp_brookesia_image_large_status_bar_battery_level1_36_36),
-                    gui::StyleImage::IMAGE_RECOLOR_WHITE(&esp_brookesia_image_large_status_bar_battery_level2_36_36),
-                    gui::StyleImage::IMAGE_RECOLOR_WHITE(&esp_brookesia_image_large_status_bar_battery_level3_36_36),
-                    gui::StyleImage::IMAGE_RECOLOR_WHITE(&esp_brookesia_image_large_status_bar_battery_level4_36_36),
-                    gui::StyleImage::IMAGE_RECOLOR_WHITE(&esp_brookesia_image_large_status_bar_battery_charge_36_36),
+                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_battery_level1_36_36, STYLESHEET_410_502_DARK_CORE_DISPLAY_ICON_COLOR),
+                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_battery_level2_36_36, STYLESHEET_410_502_DARK_CORE_DISPLAY_ICON_COLOR),
+                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_battery_level3_36_36, STYLESHEET_410_502_DARK_CORE_DISPLAY_ICON_COLOR),
+                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_battery_level4_36_36, STYLESHEET_410_502_DARK_CORE_DISPLAY_ICON_COLOR),
+                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_battery_charge_36_36, STYLESHEET_410_502_DARK_CORE_DISPLAY_ICON_COLOR),
                 },
             },
         },
@@ -61,10 +73,10 @@ constexpr StatusBar::Data STYLESHEET_410_502_DARK_STATUS_BAR_DATA = {
             .icon = {
                 .image_num = 4,
                 .images = {
-                    gui::StyleImage::IMAGE_RECOLOR_WHITE(&esp_brookesia_image_large_status_bar_wifi_close_36_36),
-                    gui::StyleImage::IMAGE_RECOLOR_WHITE(&esp_brookesia_image_large_status_bar_wifi_level1_36_36),
-                    gui::StyleImage::IMAGE_RECOLOR_WHITE(&esp_brookesia_image_large_status_bar_wifi_level2_36_36),
-                    gui::StyleImage::IMAGE_RECOLOR_WHITE(&esp_brookesia_image_large_status_bar_wifi_level3_36_36),
+                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_wifi_close_36_36, STYLESHEET_410_502_DARK_CORE_DISPLAY_ICON_COLOR),
+                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_wifi_level1_36_36, STYLESHEET_410_502_DARK_CORE_DISPLAY_ICON_COLOR),
+                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_wifi_level2_36_36, STYLESHEET_410_502_DARK_CORE_DISPLAY_ICON_COLOR),
+                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_wifi_level3_36_36, STYLESHEET_410_502_DARK_CORE_DISPLAY_ICON_COLOR),
                 },
             },
         },

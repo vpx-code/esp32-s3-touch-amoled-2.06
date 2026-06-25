@@ -18,7 +18,10 @@ constexpr NavigationBar::Data STYLESHEET_410_502_DARK_NAVIGATION_BAR_DATA = {
             .size_min = gui::StyleSize::RECT_W_PERCENT(100, 36),
             .size_max = gui::StyleSize::RECT_W_PERCENT(100, 60),
             .background_color = gui::StyleColor::COLOR(
-                STYLESHEET_410_512_DARK_CORE_DISPLAY_ACCENT_COLOR),
+                0x00ffff), // TODO: Not sure what this bar is or does. I can't
+                           // see them on the UI. Leaving these standout colors
+                           // so I can remember in case I end up bumping into
+                           // this bar.
         },
     .button =
         {
@@ -38,8 +41,8 @@ constexpr NavigationBar::Data STYLESHEET_410_502_DARK_NAVIGATION_BAR_DATA = {
                     base::Manager::NavigateType::HOME,
                     base::Manager::NavigateType::RECENTS_SCREEN,
                 },
-            .active_background_color = gui::StyleColor::COLOR_WITH_OPACITY(
-                STYLESHEET_410_512_DARK_CORE_DISPLAY_ACCENT_COLOR, LV_OPA_50),
+            .active_background_color =
+                gui::StyleColor::COLOR_WITH_OPACITY(0xffff00, LV_OPA_50),
         },
     .visual_flex =
         {
