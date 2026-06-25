@@ -5,19 +5,21 @@
  */
 #pragma once
 
-#include "systems/phone/widgets/status_bar/esp_brookesia_status_bar.hpp"
 #include "systems/phone/assets/esp_brookesia_phone_assets.h"
+#include "systems/phone/widgets/status_bar/esp_brookesia_status_bar.hpp"
+#include "theme_constants.hpp"
 
 namespace esp_brookesia::systems::phone {
 
-constexpr StatusBar::AreaData STYLESHEET_410_502_DARK_STATUS_BAR_AREA_DATA(int w_percent, StatusBar::AreaAlign align)
-{
-    return {
-        .size = gui::StyleSize::RECT_PERCENT(w_percent, 100),
-        .layout_column_align = align,
-        .layout_column_start_offset = 60,
-        .layout_column_pad = 3,
-    };
+constexpr StatusBar::AreaData
+STYLESHEET_410_502_DARK_STATUS_BAR_AREA_DATA(int w_percent,
+                                             StatusBar::AreaAlign align) {
+  return {
+      .size = gui::StyleSize::RECT_PERCENT(w_percent, 100),
+      .layout_column_align = align,
+      .layout_column_start_offset = 60,
+      .layout_column_pad = 3,
+  };
 }
 
 constexpr StatusBar::Data STYLESHEET_410_502_DARK_STATUS_BAR_DATA = {
@@ -27,7 +29,7 @@ constexpr StatusBar::Data STYLESHEET_410_502_DARK_STATUS_BAR_DATA = {
         .size_max = gui::StyleSize::RECT_W_PERCENT(100, 50),
         .background_color = gui::StyleColor::COLOR_WITH_OPACITY(0, 0),
         .text_font = gui::StyleFont::HEIGHT_PERCENT(60),
-        .text_color = gui::StyleColor::COLOR(0xFFFFFF),
+        .text_color = gui::StyleColor::COLOR(STYLESHEET_410_512_DARK_CORE_DISPLAY_ACCENT_COLOR),
     },
     .area = {
         .num = 3,
@@ -75,7 +77,7 @@ constexpr StatusBar::Data STYLESHEET_410_502_DARK_STATUS_BAR_DATA = {
         .enable_main_size_max = 1,
         .enable_battery_icon = 1,
         .enable_battery_icon_common_size = 1,
-        .enable_battery_label = 0,
+        .enable_battery_label = 1,
         .enable_wifi_icon = 1,
         .enable_wifi_icon_common_size = 1,
         .enable_clock = 1,
