@@ -117,7 +117,7 @@ constexpr base::Manager::Data STYLESHEET_410_502_DARK_CORE_MANAGER_DATA = {
 };
 
 constexpr const char *STYLESHEET_410_502_DARK_CORE_INFO_DATA_NAME =
-    "Default Dark";
+    "VPX_Genesis";
 
 constexpr base::Context::Data STYLESHEET_410_502_DARK_CORE_DATA = {
     .name = STYLESHEET_410_502_DARK_CORE_INFO_DATA_NAME,
