@@ -25,8 +25,7 @@ constexpr AppLauncherIcon::Data STYLESHEET_410_502_DARK_APP_LAUNCHER_ICON_DATA =
         .label =
             {
                 .text_font = gui::StyleFont::SIZE(18),
-                .text_color = gui::StyleColor::COLOR(
-                    STYLESHEET_410_512_DARK_CORE_DISPLAY_ACCENT_COLOR),
+                .text_color = gui::StyleColor::COLOR(COLOR_PURE_WHITE),
             },
 };
 
@@ -48,10 +47,10 @@ constexpr AppLauncherData STYLESHEET_410_502_DARK_APP_LAUNCHER_DATA = {
             .main_layout_bottom_offset = 30,
             .spot_inactive_size = gui::StyleSize::SQUARE(12),
             .spot_active_size = gui::StyleSize::RECT(40, 12),
-            .spot_inactive_background_color = gui::StyleColor::COLOR(
-                STYLESHEET_410_512_DARK_CORE_DISPLAY_INACTIVE_COLOR),
-            .spot_active_background_color = gui::StyleColor::COLOR(
-                STYLESHEET_410_512_DARK_CORE_DISPLAY_ACCENT_COLOR),
+            .spot_inactive_background_color =
+                gui::StyleColor::COLOR(COLOR_INACTIVE),
+            .spot_active_background_color =
+                gui::StyleColor::COLOR(COLOR_PRIMARY_ACCENT),
         },
     .icon = STYLESHEET_410_502_DARK_APP_LAUNCHER_ICON_DATA,
     .flags =

@@ -20,8 +20,7 @@ constexpr RecentsScreenSnapshot::Data
                 .main_layout_column_pad = 10,
                 .icon_size = gui::StyleSize::SQUARE_PERCENT(100),
                 .text_font = gui::StyleFont::HEIGHT_PERCENT(80),
-                .text_color = gui::StyleColor::COLOR(
-                    STYLESHEET_410_512_DARK_CORE_DISPLAY_ACCENT_COLOR),
+                .text_color = gui::StyleColor::COLOR(COLOR_PURE_WHITE),
             },
         .image =
             {
@@ -42,16 +41,14 @@ constexpr RecentsScreen::Data STYLESHEET_410_502_DARK_RECENTS_SCREEN_DATA = {
             .layout_row_pad = 10,
             .layout_top_pad = 10,
             .layout_bottom_pad = 10,
-            .background_color = gui::StyleColor::COLOR(
-                STYLESHEET_410_502_DARK_CORE_DISPLAY_BG_COLOR),
+            .background_color = gui::StyleColor::COLOR(COLOR_BG_LAUNCHER),
         },
     .memory =
         {
             .main_size = gui::StyleSize::RECT_W_PERCENT(100, 16),
             .main_layout_x_right_offset = 10,
             .label_text_font = gui::StyleFont::HEIGHT_PERCENT(100),
-            .label_text_color = gui::StyleColor::COLOR(
-                STYLESHEET_410_512_DARK_CORE_DISPLAY_ACCENT_COLOR),
+            .label_text_color = gui::StyleColor::COLOR(COLOR_PRIMARY_ACCENT),
             .label_unit_text = "KB",
         },
     .snapshot_table =
