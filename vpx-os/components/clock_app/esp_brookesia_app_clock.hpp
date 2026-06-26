@@ -1,173 +1,83 @@
 /*
- * SPDX-FileCopyrightText: 2023-2025 Espressif Systems (Shanghai) CO LTD
+ * Clock app — minimal Brookesia Phone app that displays local time.
  *
- * SPDX-License-Identifier: Apache-2.0
+ * Inherit from systems::phone::App to plug into the Brookesia Phone shell.
+ * The Phone shell handles the launcher icon, app lifecycle, screen resizing
+ * for the status bar, and automatic resource cleanup.
  */
 #pragma once
 
+#include "lvgl.h"
 #include "systems/phone/esp_brookesia_phone_app.hpp"
 
 namespace esp_brookesia::apps {
 
-/**
- * @brief A template for a phone app with UIs exported from Squareline Studio.
- * Users can modify this template to design their own app.
- *
- */
-class ClockDemo : public systems::phone::App {
+class ClockApp : public systems::phone::App {
 public:
-  /**
-   * @brief Get the singleton instance of ClockDemo
-   *
-   * @param use_status_bar Flag to show the status bar
-   * @param use_navigation_bar Flag to show the navigation bar
-   * @return Pointer to the singleton instance
-   */
-  static ClockDemo *requestInstance(bool use_status_bar = false,
-                                    bool use_navigation_bar = false);
+    /*
+     * Brookesia apps use a singleton pattern so the launcher always opens the
+     * same instance.  requestInstance() creates it on first call and returns
+     * the cached pointer on subsequent calls.
+     *
+     * use_status_bar:     show the system status bar inside this app
+     * use_navigation_bar: show the bottom navigation bar inside this app
+     */
+    static ClockApp *requestInstance(bool use_status_bar = false,
+                                     bool use_navigation_bar = false);
 
-  /**
-   * @brief Destructor for the phone app
-   *
-   */
-  ~ClockDemo();
+    ~ClockApp();
 
-  using systems::phone::App::endRecordResource;
-  using systems::phone::App::startRecordResource;
+    /*
+     * Expose the resource-recording helpers so the plugin registration lambda
+     * (in the .cpp) can wrap animations/timers created outside run().
+     * Not needed for this simple app, but included so the class is a complete template.
+     */
+    using systems::phone::App::startRecordResource;
+    using systems::phone::App::endRecordResource;
 
 protected:
-  /**
-   * @brief Private constructor to enforce singleton pattern
-   *
-   * @param use_status_bar Flag to show the status bar
-   * @param use_navigation_bar Flag to show the navigation bar
-   */
-  ClockDemo(bool use_status_bar, bool use_navigation_bar);
+    ClockApp(bool use_status_bar, bool use_navigation_bar);
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////// The following functions must be implemented by the
-  /// user's app class. /////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  /**
-   * @brief Called when the app starts running. This is the entry point for the
-   * app, where all UI resources should be created.
-   *
-   * @note If the `enable_default_screen` flag in `systems::base::App::Config`
-   * is set, when app starts, the core will create a default screen which will
-   * be automatically loaded and cleaned up. Then the app should create all UI
-   *       resources on it using `lv_scr_act()` in this function. Otherwise, the
-   * app needs to create a new screen and load it manually in this function
-   * @note If the `enable_recycle_resource` flag in `systems::base::App::Config`
-   * is set, when app closes, the core will automatically cleanup all recorded
-   * resources, including screens (`lv_obj_create(NULL)`), animations
-   * (`lv_anim_start()`), and timers (`lv_timer_create()`). The resources
-   * created in this function will be recorded. Otherwise, the app needs to call
-   * `cleanRecordResource()` function to clean manually
-   * @note If the `enable_resize_visual_area` flag in
-   * `systems::base::App::Config` is set, the core will resize the visual area
-   * of all recorded screens. The screens created in this function will be
-   * recorded. This is useful when the screen displays floating UIs, such as a
-   * status bar. Otherwise, the app's screens will be displayed in full screen,
-   * but some areas might be not visible. The app can call the `getVisualArea()`
-   * function to retrieve the final visual area
-   *
-   * @return true if successful, otherwise false
-   *
-   */
-  bool run(void) override;
+    /*
+     * run()  — called each time the user opens the app.
+     *          Create all LVGL widgets here.
+     *          Brookesia records screens/timers/animations created here and
+     *          auto-deletes them when the app exits (enable_recycle_resource).
+     */
+    bool run(void) override;
 
-  /**
-   * @brief Called when the app receives a back event. To exit, the app can call
-   * `notifyCoreClosed()` to notify the core to close the app.
-   *
-   * @return true if successful, otherwise false
-   *
-   */
-  bool back(void) override;
+    /*
+     * back() — called on a back-gesture or back-button press.
+     *          Call notifyCoreClosed() to tell Brookesia to close the app.
+     */
+    bool back(void) override;
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  /////////////////////////// The following functions can be redefined by the
-  /// user's app class. //////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  /**
-   * @brief Called when the app starts to close. The app can perform necessary
-   * operations here.
-   *
-   * @note  The app shouldn't call the `notifyCoreClosed()` function in this
-   * function.
-   *
-   * @return true if successful, otherwise false
-   *
-   */
-  // bool close(void) override;
+    /*
+     * init() runs once when the app is installed (at boot, before the user taps the icon).
+     * We use it to configure the Spain timezone so localtime_r() always returns CET/CEST,
+     * even without a network connection.
+     */
+    bool init(void) override;
 
-  /**
-   * @brief Called when the app starts to install. The app can perform
-   * initialization here.
-   *
-   * @return true if successful, otherwise false
-   *
-   */
-  // bool init(void) override;
-
-  /**
-   * @brief Called when the app starts to uninstall. The app can perform
-   * deinitialization here.
-   *
-   * @return true if successful, otherwise false
-   *
-   */
-  // bool deinit(void) override;
-
-  /**
-   * @brief Called when the app is paused. The app can perform necessary
-   * operations here.
-   *
-   * @return true if successful, otherwise false
-   *
-   */
-  // bool pause(void) override;
-
-  /**
-   * @brief Called when the app resumes. The app can perform necessary
-   * operations here.
-   *
-   * @note If the `enable_recycle_resource` flag in `systems::base::App::Config`
-   * is set, when app closes, the core will automatically cleanup all recorded
-   * resources, including screens (`lv_obj_create(NULL)`), animations
-   * (`lv_anim_start()`), and timers (`lv_timer_create()`). The resources
-   * created in this function will be recorded. Otherwise, the app needs to call
-   * `cleanRecordResource()` function to clean manually
-   * @note If the `enable_resize_visual_area` flag in
-   * `systems::base::App::Config` is set, the core will resize the visual area
-   * of all recorded screens. The screens created in this function will be
-   * recorded. This is useful when the screen displays floating UIs, such as a
-   * status bar. Otherwise, the app's screens will be displayed in full screen,
-   * but some areas might be not visible. The app can call the `getVisualArea()`
-   * function to retrieve the final visual area
-   *
-   * @return true if successful, otherwise false
-   *
-   */
-  // bool resume(void) override;
-
-  /**
-   * @brief Called when the app starts to close. The app can perform extra
-   * resource cleanup here.
-   *
-   * @note If there are resources that not recorded by the core (not created in
-   * the `run()` and `pause()` functions, or between the `startRecordResource()`
-   * and `stopRecordResource()` functions), the app should call this function to
-   * cleanup these resources manually. This function is not conflicted with the
-   *       `cleanRecordResource()` function.
-   *
-   * @return true if successful, otherwise false
-   *
-   */
-  // bool cleanResource(void) override;
+    /*
+     * The following overrides are optional.  Uncomment if needed:
+     *
+     * bool deinit(void) override;       // one-time teardown before uninstall
+     * bool pause(void) override;        // app goes to background
+     * bool resume(void) override;       // app comes to foreground
+     * bool close(void) override;        // app about to close (before cleanup)
+     * bool cleanResource(void) override;// manual cleanup for non-recorded resources
+     */
 
 private:
-  static ClockDemo *_instance; // Singleton instance
+    static ClockApp *_instance;
+
+    /* LVGL widget handles — kept as members so the timer callback can reach them. */
+    lv_obj_t *_time_label;   // large HH:MM:SS display
+    lv_obj_t *_date_label;   // smaller "Weekday, Month DD YYYY" line
+
+    /* Reads the system clock and updates both labels.  Called by the timer. */
+    void updateDisplay(void);
 };
 
 } // namespace esp_brookesia::apps

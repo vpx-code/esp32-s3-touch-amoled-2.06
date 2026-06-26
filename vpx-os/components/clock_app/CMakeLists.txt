@@ -1,11 +1,14 @@
 set(PROJ_SRC ${CMAKE_CURRENT_LIST_DIR})
 
-file(GLOB_RECURSE PROJ_SRCS_C ${PROJ_SRC}/*.c)
+file(GLOB_RECURSE PROJ_SRCS_C   ${PROJ_SRC}/*.c)
 file(GLOB_RECURSE PROJ_SRCS_CPP ${PROJ_SRC}/*.cpp)
 
 idf_component_register(
     SRCS  ${PROJ_SRCS_C} ${PROJ_SRCS_CPP}
     INCLUDE_DIRS ${PROJ_SRC}
+    # WHOLE_ARCHIVE forces the linker to include all object files even when
+    # nothing directly references ClockApp. Without it, the plugin registration
+    # macro is stripped and the app never appears in the launcher.
     WHOLE_ARCHIVE
 )
 
