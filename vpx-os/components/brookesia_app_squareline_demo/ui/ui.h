@@ -16,8 +16,8 @@ extern "C" {
 #endif
 
 // esp-brookesia: changed
-#include "lvgl.h"
 #include "esp_brookesia.h"
+#include "lvgl.h"
 
 // esp-brookesia: changed
 #include "components/ui_comp.h"
@@ -150,27 +150,26 @@ void ui_event_startevents____initial_actions0(lv_event_t *e);
 extern lv_obj_t *ui_startevents____initial_actions0;
 
 // IMAGES AND IMAGE SETS
-LV_IMG_DECLARE(ui_img_sls_logo_png);    // assets/sls_logo.png
+LV_IMG_DECLARE(ui_img_sls_logo_png);   // assets/sls_logo.png
 LV_IMG_DECLARE(ui_img_pattern_png);    // assets/pattern.png
-LV_IMG_DECLARE(ui_img_clock_min_png);    // assets/clock_min.png
-LV_IMG_DECLARE(ui_img_clock_hour_png);    // assets/clock_hour.png
-LV_IMG_DECLARE(ui_img_clock_sec_png);    // assets/clock_sec.png
-LV_IMG_DECLARE(ui_img_phone_png);    // assets/phone.png
-LV_IMG_DECLARE(ui_img_avatar_png);    // assets/avatar.png
+LV_IMG_DECLARE(ui_img_clock_min_png);  // assets/clock_min.png
+LV_IMG_DECLARE(ui_img_clock_hour_png); // assets/clock_hour.png
+LV_IMG_DECLARE(ui_img_clock_sec_png);  // assets/clock_sec.png
+LV_IMG_DECLARE(ui_img_phone_png);      // assets/phone.png
+LV_IMG_DECLARE(ui_img_avatar_png);     // assets/avatar.png
 LV_IMG_DECLARE(ui_img_chatbox_png);    // assets/chatbox.png
-LV_IMG_DECLARE(ui_img_chatbox2_png);    // assets/chatbox2.png
-LV_IMG_DECLARE(ui_img_play_png);    // assets/play.png
-LV_IMG_DECLARE(ui_img_album_png);    // assets/album.png
-LV_IMG_DECLARE(ui_img_backward_png);    // assets/backward.png
+LV_IMG_DECLARE(ui_img_chatbox2_png);   // assets/chatbox2.png
+LV_IMG_DECLARE(ui_img_play_png);       // assets/play.png
+LV_IMG_DECLARE(ui_img_album_png);      // assets/album.png
+LV_IMG_DECLARE(ui_img_backward_png);   // assets/backward.png
 LV_IMG_DECLARE(ui_img_forward_png);    // assets/forward.png
-LV_IMG_DECLARE(ui_img_cloud_png);    // assets/cloud.png
-LV_IMG_DECLARE(ui_img_weather_1_png);    // assets/weather_1.png
-LV_IMG_DECLARE(ui_img_weather_2_png);    // assets/weather_2.png
-LV_IMG_DECLARE(ui_img_weather_3_png);    // assets/weather_3.png
+LV_IMG_DECLARE(ui_img_cloud_png);      // assets/cloud.png
+LV_IMG_DECLARE(ui_img_weather_1_png);  // assets/weather_1.png
+LV_IMG_DECLARE(ui_img_weather_2_png);  // assets/weather_2.png
+LV_IMG_DECLARE(ui_img_weather_3_png);  // assets/weather_3.png
 
 // FONTS
 LV_FONT_DECLARE(ui_font_Number);
-
 
 // esp-brookesia: changed
 void phone_app_squareline_ui_init(void);

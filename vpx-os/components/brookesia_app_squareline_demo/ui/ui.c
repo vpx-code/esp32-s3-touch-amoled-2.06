@@ -13,7 +13,8 @@
 
 // esp-brookesia: changed
 #if !defined(ESP_BROOKESIA_SQ1_4_1_LV8_3_11)
-#define _ui_screen_change(target, fademode, spd, delay, target_init) lv_scr_load_anim(*target, fademode, spd, delay, false)
+#define _ui_screen_change(target, fademode, spd, delay, target_init)           \
+  lv_scr_load_anim(*target, fademode, spd, delay, false)
 #endif
 
 ///////////////////// VARIABLES ////////////////////
@@ -23,7 +24,6 @@ void min_Animation(lv_obj_t *TargetObject, int delay);
 void sec_Animation(lv_obj_t *TargetObject, int delay);
 void scrolldot_Animation(lv_obj_t *TargetObject, int delay);
 
-
 // SCREEN: ui_screen_splash
 void ui_screen_splash_screen_init(void);
 void ui_event_screen_splash(lv_event_t *e);
@@ -32,7 +32,6 @@ lv_obj_t *ui_splash_small_label_demo;
 lv_obj_t *ui_splash_small_label_smart_gadget;
 lv_obj_t *ui_splash_image_sls_logo;
 // CUSTOM VARIABLES
-
 
 // SCREEN: ui_screen_clock
 void ui_screen_clock_screen_init(void);
@@ -60,7 +59,6 @@ lv_obj_t *ui_clock_small_label_date;
 lv_obj_t *ui_clock_scrolldots_scrolldots;
 // CUSTOM VARIABLES
 
-
 // SCREEN: ui_screen_call
 void ui_screen_call_screen_init(void);
 void ui_event_screen_call(lv_event_t *e);
@@ -74,7 +72,6 @@ lv_obj_t *ui_call_image_phone2;
 lv_obj_t *ui_call_image_avatar;
 lv_obj_t *ui_call_scrolldots_scrolldots1;
 // CUSTOM VARIABLES
-
 
 // SCREEN: ui_screen_chat
 void ui_screen_chat_screen_init(void);
@@ -98,7 +95,6 @@ lv_obj_t *ui_chat_image_chat_icon3;
 lv_obj_t *ui_chat_scrolldots_scrolldots2;
 // CUSTOM VARIABLES
 
-
 // SCREEN: ui_screen_music_player
 void ui_screen_music_player_screen_init(void);
 void ui_event_screen_music_player(lv_event_t *e);
@@ -112,7 +108,6 @@ lv_obj_t *ui_music_player_image_backward;
 lv_obj_t *ui_music_player_image_forward;
 lv_obj_t *ui_music_player_scrolldots_scrolldots3;
 // CUSTOM VARIABLES
-
 
 // SCREEN: ui_screen_weather
 void ui_screen_weather_screen_init(void);
@@ -131,7 +126,6 @@ lv_obj_t *ui_weather_small_label_w2_num;
 lv_obj_t *ui_weather_small_label_w3_num;
 lv_obj_t *ui_weather_scrolldots_scrolldots4;
 // CUSTOM VARIABLES
-
 
 // SCREEN: ui_screen_alarm
 void ui_screen_alarm_screen_init(void);
@@ -152,7 +146,8 @@ lv_obj_t *ui_startevents____initial_actions0;
 
 // IMAGES AND IMAGE SETS
 const lv_image_dsc_t *ui_imgset_chatbox[1] = {&ui_img_chatbox2_png};
-const lv_image_dsc_t *ui_imgset_weather_[3] = {&ui_img_weather_1_png, &ui_img_weather_2_png, &ui_img_weather_3_png};
+const lv_image_dsc_t *ui_imgset_weather_[3] = {
+    &ui_img_weather_1_png, &ui_img_weather_2_png, &ui_img_weather_3_png};
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
 #if LV_COLOR_DEPTH != 16
@@ -163,175 +158,191 @@ const lv_image_dsc_t *ui_imgset_weather_[3] = {&ui_img_weather_1_png, &ui_img_we
 // esp-brookesia: changed
 
 ///////////////////// FUNCTIONS ////////////////////
-void ui_event_screen_splash(lv_event_t *e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
+void ui_event_screen_splash(lv_event_t *e) {
+  lv_event_code_t event_code = lv_event_get_code(e);
 
-    if (event_code == LV_EVENT_SCREEN_LOADED) {
-        upanim_Animation(ui_splash_image_sls_logo, 100);
-        upanim_Animation(ui_splash_small_label_smart_gadget, 200);
-        upanim_Animation(ui_splash_small_label_demo, 300);
-        _ui_screen_change(&ui_screen_clock, LV_SCR_LOAD_ANIM_FADE_ON, 200, 1400, &ui_screen_clock_screen_init);
-    }
+  if (event_code == LV_EVENT_SCREEN_LOADED) {
+    upanim_Animation(ui_splash_image_sls_logo, 100);
+    upanim_Animation(ui_splash_small_label_smart_gadget, 200);
+    upanim_Animation(ui_splash_small_label_demo, 300);
+    _ui_screen_change(&ui_screen_clock, LV_SCR_LOAD_ANIM_FADE_ON, 200, 1400,
+                      &ui_screen_clock_screen_init);
+  }
 }
 
-void ui_event_screen_clock(lv_event_t *e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
+void ui_event_screen_clock(lv_event_t *e) {
+  lv_event_code_t event_code = lv_event_get_code(e);
 
-    if (event_code == LV_EVENT_SCREEN_LOAD_START) {
-        upanim_Animation(ui_clock_panel_clock_panel, 100);
-        upanim_Animation(ui_clock_label_clock_number, 300);
-        upanim_Animation(ui_clock_small_label_date, 200);
-        scrolldot_Animation(ui_clock_scrolldots_scrolldots, 0);
-    }
-    if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_LEFT) {
-        lv_indev_wait_release(lv_indev_active());
-        _ui_screen_change(&ui_screen_call, LV_SCR_LOAD_ANIM_FADE_ON, 10, 0, &ui_screen_call_screen_init);
-    }
-    if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_RIGHT) {
-        lv_indev_wait_release(lv_indev_active());
-        _ui_screen_change(&ui_screen_alarm, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0, &ui_screen_alarm_screen_init);
-    }
-    if (event_code == LV_EVENT_SCREEN_LOAD_START) {
-        hour_Animation(ui_clock_image_hour, 200);
-        min_Animation(ui_clock_image_min, 400);
-    }
+  if (event_code == LV_EVENT_SCREEN_LOAD_START) {
+    upanim_Animation(ui_clock_panel_clock_panel, 100);
+    upanim_Animation(ui_clock_label_clock_number, 300);
+    upanim_Animation(ui_clock_small_label_date, 200);
+    scrolldot_Animation(ui_clock_scrolldots_scrolldots, 0);
+  }
+  if (event_code == LV_EVENT_GESTURE &&
+      lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_LEFT) {
+    lv_indev_wait_release(lv_indev_active());
+    _ui_screen_change(&ui_screen_call, LV_SCR_LOAD_ANIM_FADE_ON, 10, 0,
+                      &ui_screen_call_screen_init);
+  }
+  if (event_code == LV_EVENT_GESTURE &&
+      lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_RIGHT) {
+    lv_indev_wait_release(lv_indev_active());
+    _ui_screen_change(&ui_screen_alarm, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0,
+                      &ui_screen_alarm_screen_init);
+  }
+  if (event_code == LV_EVENT_SCREEN_LOAD_START) {
+    hour_Animation(ui_clock_image_hour, 200);
+    min_Animation(ui_clock_image_min, 400);
+  }
 }
 
-void ui_event_screen_call(lv_event_t *e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
+void ui_event_screen_call(lv_event_t *e) {
+  lv_event_code_t event_code = lv_event_get_code(e);
 
-    if (event_code == LV_EVENT_SCREEN_LOADED) {
-        upanim_Animation(ui_call_image_avatar, 100);
-        upanim_Animation(ui_call_small_label_elena, 200);
-        upanim_Animation(ui_call_small_label_incoming, 300);
-        upanim_Animation(ui_call_panel_call_incon1, 200);
-        upanim_Animation(ui_call_panel_call_incon2, 300);
-        scrolldot_Animation(ui_call_scrolldots_scrolldots1, 0);
-    }
-    if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_LEFT) {
-        lv_indev_wait_release(lv_indev_active());
-        _ui_screen_change(&ui_screen_chat, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0, &ui_screen_chat_screen_init);
-    }
-    if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_RIGHT) {
-        lv_indev_wait_release(lv_indev_active());
-        _ui_screen_change(&ui_screen_clock, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0, &ui_screen_clock_screen_init);
-    }
+  if (event_code == LV_EVENT_SCREEN_LOADED) {
+    upanim_Animation(ui_call_image_avatar, 100);
+    upanim_Animation(ui_call_small_label_elena, 200);
+    upanim_Animation(ui_call_small_label_incoming, 300);
+    upanim_Animation(ui_call_panel_call_incon1, 200);
+    upanim_Animation(ui_call_panel_call_incon2, 300);
+    scrolldot_Animation(ui_call_scrolldots_scrolldots1, 0);
+  }
+  if (event_code == LV_EVENT_GESTURE &&
+      lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_LEFT) {
+    lv_indev_wait_release(lv_indev_active());
+    _ui_screen_change(&ui_screen_chat, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0,
+                      &ui_screen_chat_screen_init);
+  }
+  if (event_code == LV_EVENT_GESTURE &&
+      lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_RIGHT) {
+    lv_indev_wait_release(lv_indev_active());
+    _ui_screen_change(&ui_screen_clock, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0,
+                      &ui_screen_clock_screen_init);
+  }
 }
 
-void ui_event_screen_chat(lv_event_t *e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
+void ui_event_screen_chat(lv_event_t *e) {
+  lv_event_code_t event_code = lv_event_get_code(e);
 
-    if (event_code == LV_EVENT_SCREEN_LOADED) {
-        upanim_Animation(ui_chat_small_label_chat_date, 100);
-        upanim_Animation(ui_chat_panel_c1, 200);
-        upanim_Animation(ui_chat_panel_c2, 300);
-        upanim_Animation(ui_chat_panel_c3, 400);
-        scrolldot_Animation(ui_chat_scrolldots_scrolldots2, 0);
-    }
-    if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_RIGHT) {
-        lv_indev_wait_release(lv_indev_active());
-        _ui_screen_change(&ui_screen_call, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0, &ui_screen_call_screen_init);
-    }
-    if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_LEFT) {
-        lv_indev_wait_release(lv_indev_active());
-        _ui_screen_change(&ui_screen_music_player, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0, &ui_screen_music_player_screen_init);
-    }
+  if (event_code == LV_EVENT_SCREEN_LOADED) {
+    upanim_Animation(ui_chat_small_label_chat_date, 100);
+    upanim_Animation(ui_chat_panel_c1, 200);
+    upanim_Animation(ui_chat_panel_c2, 300);
+    upanim_Animation(ui_chat_panel_c3, 400);
+    scrolldot_Animation(ui_chat_scrolldots_scrolldots2, 0);
+  }
+  if (event_code == LV_EVENT_GESTURE &&
+      lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_RIGHT) {
+    lv_indev_wait_release(lv_indev_active());
+    _ui_screen_change(&ui_screen_call, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0,
+                      &ui_screen_call_screen_init);
+  }
+  if (event_code == LV_EVENT_GESTURE &&
+      lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_LEFT) {
+    lv_indev_wait_release(lv_indev_active());
+    _ui_screen_change(&ui_screen_music_player, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0,
+                      &ui_screen_music_player_screen_init);
+  }
 }
 
-void ui_event_screen_music_player(lv_event_t *e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
+void ui_event_screen_music_player(lv_event_t *e) {
+  lv_event_code_t event_code = lv_event_get_code(e);
 
-    if (event_code == LV_EVENT_SCREEN_LOADED) {
-        upanim_Animation(ui_music_player_image_album, 100);
-        upanim_Animation(ui_music_player_small_label_music_title, 200);
-        upanim_Animation(ui_music_player_small_label_author, 300);
-        upanim_Animation(ui_music_player_panel_play_btn, 200);
-        upanim_Animation(ui_music_player_image_forward, 300);
-        upanim_Animation(ui_music_player_image_backward, 400);
-        scrolldot_Animation(ui_music_player_scrolldots_scrolldots3, 0);
-    }
-    if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_RIGHT) {
-        lv_indev_wait_release(lv_indev_active());
-        _ui_screen_change(&ui_screen_chat, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0, &ui_screen_chat_screen_init);
-    }
-    if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_LEFT) {
-        lv_indev_wait_release(lv_indev_active());
-        _ui_screen_change(&ui_screen_weather, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0, &ui_screen_weather_screen_init);
-    }
+  if (event_code == LV_EVENT_SCREEN_LOADED) {
+    upanim_Animation(ui_music_player_image_album, 100);
+    upanim_Animation(ui_music_player_small_label_music_title, 200);
+    upanim_Animation(ui_music_player_small_label_author, 300);
+    upanim_Animation(ui_music_player_panel_play_btn, 200);
+    upanim_Animation(ui_music_player_image_forward, 300);
+    upanim_Animation(ui_music_player_image_backward, 400);
+    scrolldot_Animation(ui_music_player_scrolldots_scrolldots3, 0);
+  }
+  if (event_code == LV_EVENT_GESTURE &&
+      lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_RIGHT) {
+    lv_indev_wait_release(lv_indev_active());
+    _ui_screen_change(&ui_screen_chat, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0,
+                      &ui_screen_chat_screen_init);
+  }
+  if (event_code == LV_EVENT_GESTURE &&
+      lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_LEFT) {
+    lv_indev_wait_release(lv_indev_active());
+    _ui_screen_change(&ui_screen_weather, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0,
+                      &ui_screen_weather_screen_init);
+  }
 }
 
-void ui_event_screen_weather(lv_event_t *e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
+void ui_event_screen_weather(lv_event_t *e) {
+  lv_event_code_t event_code = lv_event_get_code(e);
 
-    if (event_code == LV_EVENT_SCREEN_LOADED) {
-        upanim_Animation(ui_weather_image_cloud, 100);
-        upanim_Animation(ui_weather_small_label_pary_cloud, 200);
-        upanim_Animation(ui_weather_label_celsius, 300);
-        upanim_Animation(ui_weather_small_label_new_york, 400);
-        upanim_Animation(ui_weather_panel_weather_icons, 300);
-        scrolldot_Animation(ui_weather_scrolldots_scrolldots4, 0);
-    }
-    if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_RIGHT) {
-        lv_indev_wait_release(lv_indev_active());
-        _ui_screen_change(&ui_screen_music_player, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0, &ui_screen_music_player_screen_init);
-    }
-    if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_LEFT) {
-        lv_indev_wait_release(lv_indev_active());
-        _ui_screen_change(&ui_screen_alarm, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0, &ui_screen_alarm_screen_init);
-    }
+  if (event_code == LV_EVENT_SCREEN_LOADED) {
+    upanim_Animation(ui_weather_image_cloud, 100);
+    upanim_Animation(ui_weather_small_label_pary_cloud, 200);
+    upanim_Animation(ui_weather_label_celsius, 300);
+    upanim_Animation(ui_weather_small_label_new_york, 400);
+    upanim_Animation(ui_weather_panel_weather_icons, 300);
+    scrolldot_Animation(ui_weather_scrolldots_scrolldots4, 0);
+  }
+  if (event_code == LV_EVENT_GESTURE &&
+      lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_RIGHT) {
+    lv_indev_wait_release(lv_indev_active());
+    _ui_screen_change(&ui_screen_music_player, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0,
+                      &ui_screen_music_player_screen_init);
+  }
+  if (event_code == LV_EVENT_GESTURE &&
+      lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_LEFT) {
+    lv_indev_wait_release(lv_indev_active());
+    _ui_screen_change(&ui_screen_alarm, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0,
+                      &ui_screen_alarm_screen_init);
+  }
 }
 
-void ui_event_screen_alarm(lv_event_t *e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
+void ui_event_screen_alarm(lv_event_t *e) {
+  lv_event_code_t event_code = lv_event_get_code(e);
 
-    if (event_code == LV_EVENT_SCREEN_LOADED) {
-        upanim_Animation(ui_alarm_small_label_set_alarm, 100);
-        upanim_Animation(ui_alarm_alarm_comp_alarm_comp, 200);
-        upanim_Animation(ui_alarm_alarm_comp_alarm_comp1, 300);
-        upanim_Animation(ui_alarm_alarm_comp_alarm_comp2, 400);
-        upanim_Animation(ui_alarm_alarm_comp_alarm_comp3, 500);
-        scrolldot_Animation(ui_alarm_scrolldots_scrolldots5, 0);
-    }
-    if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_RIGHT) {
-        lv_indev_wait_release(lv_indev_active());
-        _ui_screen_change(&ui_screen_weather, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0, &ui_screen_weather_screen_init);
-    }
-    if (event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_LEFT) {
-        lv_indev_wait_release(lv_indev_active());
-        _ui_screen_change(&ui_screen_clock, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0, &ui_screen_clock_screen_init);
-    }
+  if (event_code == LV_EVENT_SCREEN_LOADED) {
+    upanim_Animation(ui_alarm_small_label_set_alarm, 100);
+    upanim_Animation(ui_alarm_alarm_comp_alarm_comp, 200);
+    upanim_Animation(ui_alarm_alarm_comp_alarm_comp1, 300);
+    upanim_Animation(ui_alarm_alarm_comp_alarm_comp2, 400);
+    upanim_Animation(ui_alarm_alarm_comp_alarm_comp3, 500);
+    scrolldot_Animation(ui_alarm_scrolldots_scrolldots5, 0);
+  }
+  if (event_code == LV_EVENT_GESTURE &&
+      lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_RIGHT) {
+    lv_indev_wait_release(lv_indev_active());
+    _ui_screen_change(&ui_screen_weather, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0,
+                      &ui_screen_weather_screen_init);
+  }
+  if (event_code == LV_EVENT_GESTURE &&
+      lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_LEFT) {
+    lv_indev_wait_release(lv_indev_active());
+    _ui_screen_change(&ui_screen_clock, LV_SCR_LOAD_ANIM_FADE_ON, 0, 0,
+                      &ui_screen_clock_screen_init);
+  }
 }
 
-void ui_event_startevents____initial_actions0(lv_event_t *e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
+void ui_event_startevents____initial_actions0(lv_event_t *e) {
+  lv_event_code_t event_code = lv_event_get_code(e);
 
-    if (event_code == LV_EVENT_SCREEN_LOAD_START) {
-        sec_Animation(ui_clock_image_sec, 0);
-    }
+  if (event_code == LV_EVENT_SCREEN_LOAD_START) {
+    sec_Animation(ui_clock_image_sec, 0);
+  }
 }
 
 ///////////////////// SCREENS ////////////////////
 
 // esp-brookesia: changed
-void phone_app_squareline_ui_init(void)
-{
-    lv_display_t *dispp = lv_display_get_default();
-    lv_theme_t *theme = lv_theme_simple_init(dispp);
-    lv_disp_set_theme(dispp, theme);
-    ui_screen_splash_screen_init();
-    ui_screen_clock_screen_init();
-    ui_screen_call_screen_init();
-    ui_screen_chat_screen_init();
-    ui_screen_music_player_screen_init();
-    ui_screen_weather_screen_init();
-    ui_screen_alarm_screen_init();
-    lv_disp_load_scr(ui_screen_splash);
+void phone_app_squareline_ui_init(void) {
+  lv_display_t *dispp = lv_display_get_default();
+  lv_theme_t *theme = lv_theme_simple_init(dispp);
+  lv_disp_set_theme(dispp, theme);
+  ui_screen_splash_screen_init();
+  ui_screen_clock_screen_init();
+  ui_screen_call_screen_init();
+  ui_screen_chat_screen_init();
+  ui_screen_music_player_screen_init();
+  ui_screen_weather_screen_init();
+  ui_screen_alarm_screen_init();
+  lv_disp_load_scr(ui_screen_splash);
 }
