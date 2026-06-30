@@ -10,3 +10,4 @@ dependencies.lock
 vpx-os/.claude
 vpx-os/.clangd
 vpx-os/.vscode/settings.json
+vpx-os/test_apps
