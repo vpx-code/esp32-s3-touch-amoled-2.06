@@ -9,6 +9,10 @@
 #define ESP_UTILS_LOG_TAG "BS:Settings"
 #include "esp_lib_utils.h"
 
+#include "brookesia/lib_utils.hpp"
+#include "brookesia/service_helper/wifi.hpp"
+#include "brookesia/service_manager.hpp"
+
 #include "../main/dark/theme_constants.hpp"
 #include "Settings.hpp"
 /* ------------------------------------------------------------------
