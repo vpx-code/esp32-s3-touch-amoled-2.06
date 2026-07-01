@@ -16,7 +16,7 @@ dependencies:
     public: true
 
   espressif/esp-boost:
-    version: "0.3.*"
+    version: "^0.6.0"
     public: true
 
   # GUI - LVGL
@@ -35,13 +35,13 @@ dependencies:
 
   # AI Framework - Agent
   espressif/esp_coze:
-    version: '^0.6'
+    version: "^0.6"
     public: true
   espressif/gmf_core:
     version: "^0.6"
     public: true
   espressif/gmf_ai_audio:
-    version: '^0.6'
+    version: "^0.6"
     public: true
     rules:
       - if: "target in [esp32p4, esp32s3, esp32]"
@@ -55,7 +55,7 @@ dependencies:
     version: "^0.6"
     public: true
   espressif/esp_audio_simple_player:
-    version: '0.9.3'
+    version: "0.9.3"
     public: true
   espressif/esp_websocket_client:
     version: "^1.2.3"

@@ -3,3 +3,5 @@ dependencies:
   waveshare/esp32_s3_touch_amoled_2_06: '*'
   espressif/esp_lvgl_port: <2.7.0
   espressif/brookesia_service_wifi: '*'
+  espressif/brookesia_lib_utils: ^0.7.9
+  espressif/esp-boost: ^0.6.0
