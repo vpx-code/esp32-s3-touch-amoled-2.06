@@ -15,7 +15,7 @@ constexpr base::Display::Data
         {
             .background =
                 {
-                    .color = gui::StyleColor::COLOR(COLOR_BG_LAUNCHER),
+                    .color = gui::StyleColor::COLOR(theme::COLOR_BG_LAUNCHER),
                     .wallpaper_image_resource = NULL,
                 },
             .text =

@@ -35,7 +35,7 @@ constexpr StatusBar::Data STYLESHEET_410_502_DARK_STATUS_BAR_DATA = {
             .background_color = gui::StyleColor::COLOR_WITH_OPACITY(0, 0),
             .text_font = gui::StyleFont::HEIGHT_PERCENT(60),
             .text_color = gui::StyleColor::COLOR(
-                COLOR_PRIMARY_ACCENT),
+                theme::COLOR_PRIMARY_ACCENT),
         },
     .area =
         {
@@ -58,11 +58,11 @@ constexpr StatusBar::Data STYLESHEET_410_502_DARK_STATUS_BAR_DATA = {
             .icon = {
                 .image_num = 5,
                 .images = {
-                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_battery_level1_36_36, COLOR_SECONDARY_ACCENT),
-                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_battery_level2_36_36, COLOR_SECONDARY_ACCENT),
-                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_battery_level3_36_36, COLOR_SECONDARY_ACCENT),
-                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_battery_level4_36_36, COLOR_SECONDARY_ACCENT),
-                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_battery_charge_36_36, COLOR_SECONDARY_ACCENT),
+                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_battery_level1_36_36, theme::COLOR_SECONDARY_ACCENT),
+                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_battery_level2_36_36, theme::COLOR_SECONDARY_ACCENT),
+                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_battery_level3_36_36, theme::COLOR_SECONDARY_ACCENT),
+                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_battery_level4_36_36, theme::COLOR_SECONDARY_ACCENT),
+                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_battery_charge_36_36, theme::COLOR_SECONDARY_ACCENT),
                 },
             },
         },
@@ -73,10 +73,10 @@ constexpr StatusBar::Data STYLESHEET_410_502_DARK_STATUS_BAR_DATA = {
             .icon = {
                 .image_num = 4,
                 .images = {
-                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_wifi_close_36_36, COLOR_SECONDARY_ACCENT),
-                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_wifi_level1_36_36, COLOR_SECONDARY_ACCENT),
-                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_wifi_level2_36_36, COLOR_SECONDARY_ACCENT),
-                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_wifi_level3_36_36, COLOR_SECONDARY_ACCENT),
+                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_wifi_close_36_36, theme::COLOR_SECONDARY_ACCENT),
+                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_wifi_level1_36_36, theme::COLOR_SECONDARY_ACCENT),
+                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_wifi_level2_36_36, theme::COLOR_SECONDARY_ACCENT),
+                    gui::StyleImage::IMAGE_RECOLOR(&esp_brookesia_image_large_status_bar_wifi_level3_36_36, theme::COLOR_SECONDARY_ACCENT),
                 },
             },
         },
