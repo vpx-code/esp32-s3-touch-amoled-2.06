@@ -67,6 +67,7 @@ bool SettingsApp::run(void) {
   lv_obj_t *back_btn = lv_menu_get_main_header_back_button(menu);
   lv_obj_t *back_button_label = lv_label_create(back_btn);
   lv_label_set_text(back_button_label, "Back");
+  lv_obj_set_style_text_font(back_button_label, &lv_font_montserrat_32, 0);
 
   lv_obj_t *cont;
   lv_obj_t *label;
@@ -77,41 +78,48 @@ bool SettingsApp::run(void) {
 
   cont = lv_menu_cont_create(sub_1_page);
   label = lv_label_create(cont);
+  lv_obj_set_style_text_font(label, &lv_font_montserrat_24, 0);
   lv_obj_set_style_text_color(label, lv_color_hex(theme::COLOR_PURE_WHITE), 0);
+  lv_label_set_text(label, "Scan Networks");
 
-  lv_label_set_text(label, "Hello, I am hiding here");
-
-  lv_obj_t *sub_2_page = lv_menu_page_create(menu, "BLE");
+  lv_obj_t *sub_2_page =
+      lv_menu_page_create(menu, "BLE"); // TODO: can we make the title bigger?
 
   cont = lv_menu_cont_create(sub_2_page);
   label = lv_label_create(cont);
+  lv_obj_set_style_text_font(label, &lv_font_montserrat_24, 0);
   lv_obj_set_style_text_color(label, lv_color_hex(theme::COLOR_PURE_WHITE), 0);
-  lv_label_set_text(label, "Hello, I am hiding here");
+  lv_label_set_text(label, "Connect to Bluetooth");
 
   lv_obj_t *sub_3_page = lv_menu_page_create(menu, "Display");
+  lv_obj_set_style_text_font(sub_3_page, &lv_font_montserrat_24, 0);
 
   cont = lv_menu_cont_create(sub_3_page);
   label = lv_label_create(cont);
+  lv_obj_set_style_text_font(label, &lv_font_montserrat_24, 0);
   lv_obj_set_style_text_color(label, lv_color_hex(theme::COLOR_PURE_WHITE), 0);
-  lv_label_set_text(label, "Hello, I am hiding here");
+  lv_label_set_text(label, "Brightness");
 
   /*Create a main page*/
   lv_obj_t *main_page = lv_menu_page_create(menu, NULL);
 
   cont = lv_menu_cont_create(main_page);
   label = lv_label_create(cont);
+  lv_obj_set_style_text_font(label, &lv_font_montserrat_24, 0);
   lv_obj_set_style_text_color(label, lv_color_hex(theme::COLOR_PURE_WHITE), 0);
   lv_label_set_text(label, "Wi-Fi");
   lv_menu_set_load_page_event(menu, cont, sub_1_page);
 
   cont = lv_menu_cont_create(main_page);
   label = lv_label_create(cont);
+  lv_obj_set_style_text_font(label, &lv_font_montserrat_24, 0);
   lv_obj_set_style_text_color(label, lv_color_hex(theme::COLOR_PURE_WHITE), 0);
   lv_label_set_text(label, "BLE");
   lv_menu_set_load_page_event(menu, cont, sub_2_page);
 
   cont = lv_menu_cont_create(main_page);
   label = lv_label_create(cont);
+  lv_obj_set_style_text_font(label, &lv_font_montserrat_24, 0);
   lv_obj_set_style_text_color(label, lv_color_hex(theme::COLOR_PURE_WHITE), 0);
   lv_label_set_text(label, "Display");
   lv_menu_set_load_page_event(menu, cont, sub_3_page);
