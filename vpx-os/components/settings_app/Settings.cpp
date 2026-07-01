@@ -9,8 +9,8 @@
 #define ESP_UTILS_LOG_TAG "BS:Settings"
 #include "esp_lib_utils.h"
 
+#include "../main/dark/theme_constants.hpp"
 #include "Settings.hpp"
-
 /* ------------------------------------------------------------------
  * App identity
  * ------------------------------------------------------------------ */
@@ -44,15 +44,79 @@ SettingsApp::~SettingsApp() {}
 bool SettingsApp::run(void) {
   ESP_UTILS_LOGD("Settings run()");
 
-  lv_obj_set_style_bg_color(lv_screen_active(), lv_color_hex(0x003a57),
-                            LV_PART_MAIN);
+  /*
+  ============================MENU===========================
+  */
+  // Create menu
+  /*Create a menu object*/
+  lv_obj_t *menu = lv_menu_create(lv_screen_active());
 
-  /*Create a white label, set its text and align it to the center*/
-  lv_obj_t *label = lv_label_create(lv_screen_active());
-  lv_label_set_text(label, "Settings");
-  lv_obj_set_style_text_color(lv_screen_active(), lv_color_hex(0xffffff),
-                              LV_PART_MAIN);
-  lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
+  lv_obj_set_size(menu, lv_display_get_horizontal_resolution(NULL),
+                  lv_display_get_vertical_resolution(NULL));
+
+  lv_obj_set_style_pad_top(menu, theme::PADDING, 0);
+  lv_obj_set_style_pad_bottom(menu, theme::PADDING, 0);
+  lv_obj_set_style_pad_left(menu, theme::PADDING, 0);
+  lv_obj_set_style_pad_right(menu, theme::PADDING, 0);
+
+  lv_obj_set_style_bg_color(menu, lv_color_hex(theme::COLOR_BG_LAUNCHER), 0);
+
+  lv_obj_center(menu);
+
+  /*Modify the header*/
+  lv_obj_t *back_btn = lv_menu_get_main_header_back_button(menu);
+  lv_obj_t *back_button_label = lv_label_create(back_btn);
+  lv_label_set_text(back_button_label, "Back");
+
+  lv_obj_t *cont;
+  lv_obj_t *label;
+
+  /*Create sub pages*/ // TODO: Let's abstract this or it'll become a mess in no
+                       // time
+  lv_obj_t *sub_1_page = lv_menu_page_create(menu, "Wi-Fi");
+
+  cont = lv_menu_cont_create(sub_1_page);
+  label = lv_label_create(cont);
+  lv_obj_set_style_text_color(label, lv_color_hex(theme::COLOR_PURE_WHITE), 0);
+
+  lv_label_set_text(label, "Hello, I am hiding here");
+
+  lv_obj_t *sub_2_page = lv_menu_page_create(menu, "BLE");
+
+  cont = lv_menu_cont_create(sub_2_page);
+  label = lv_label_create(cont);
+  lv_obj_set_style_text_color(label, lv_color_hex(theme::COLOR_PURE_WHITE), 0);
+  lv_label_set_text(label, "Hello, I am hiding here");
+
+  lv_obj_t *sub_3_page = lv_menu_page_create(menu, "Display");
+
+  cont = lv_menu_cont_create(sub_3_page);
+  label = lv_label_create(cont);
+  lv_obj_set_style_text_color(label, lv_color_hex(theme::COLOR_PURE_WHITE), 0);
+  lv_label_set_text(label, "Hello, I am hiding here");
+
+  /*Create a main page*/
+  lv_obj_t *main_page = lv_menu_page_create(menu, NULL);
+
+  cont = lv_menu_cont_create(main_page);
+  label = lv_label_create(cont);
+  lv_obj_set_style_text_color(label, lv_color_hex(theme::COLOR_PURE_WHITE), 0);
+  lv_label_set_text(label, "Wi-Fi");
+  lv_menu_set_load_page_event(menu, cont, sub_1_page);
+
+  cont = lv_menu_cont_create(main_page);
+  label = lv_label_create(cont);
+  lv_obj_set_style_text_color(label, lv_color_hex(theme::COLOR_PURE_WHITE), 0);
+  lv_label_set_text(label, "BLE");
+  lv_menu_set_load_page_event(menu, cont, sub_2_page);
+
+  cont = lv_menu_cont_create(main_page);
+  label = lv_label_create(cont);
+  lv_obj_set_style_text_color(label, lv_color_hex(theme::COLOR_PURE_WHITE), 0);
+  lv_label_set_text(label, "Display");
+  lv_menu_set_load_page_event(menu, cont, sub_3_page);
+
+  lv_menu_set_page(menu, main_page);
 
   return true;
 }
