@@ -6,7 +6,7 @@ file(GLOB_RECURSE PROJ_SRCS_CPP ${PROJ_SRC}/*.cpp)
 idf_component_register(
     SRCS  ${PROJ_SRCS_C} ${PROJ_SRCS_CPP}
     INCLUDE_DIRS ${PROJ_SRC}
-    PRIV_REQUIRES espressif__brookesia_service_helper espressif__brookesia_service_manager
+    PRIV_REQUIRES espressif__brookesia_service_helper espressif__brookesia_service_manager waveshare__esp32_s3_touch_amoled_2_06
     # WHOLE_ARCHIVE forces the linker to include all object files even when
     # nothing directly references ClockApp. Without it, the plugin registration
     # macro is stripped and the app never appears in the launcher.

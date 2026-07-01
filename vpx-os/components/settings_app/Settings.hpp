@@ -15,6 +15,7 @@ public:
 protected:
   SettingsApp(bool use_status_bar, bool use_navigation_bar);
 
+  bool init(void) override;
   bool run(void) override;
   bool back(void) override;
 

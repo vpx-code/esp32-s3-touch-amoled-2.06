@@ -1,3 +1,8 @@
+// esp_err.h must be included before bsp/display.h, which uses esp_err_t without
+// including it itself. The blank line keeps clang-format from reordering them.
+#include "esp_err.h"
+
+#include "bsp/display.h"
 #include "esp_brookesia.hpp"
 #include "lvgl.h"
 #include <cstdio>
@@ -20,14 +25,30 @@
  * ------------------------------------------------------------------ */
 #define APP_NAME "Settings"
 
+/* Backlight brightness is expressed as a percentage (0-100). */
+#define Backlight_MAX 100
+#define DEFAULT_BACKLIGHT 80
+
 using namespace std;
 using namespace esp_brookesia::gui;
 using namespace esp_brookesia::systems;
+
+static lv_obj_t *Backlight_slider;
 
 /* Launcher icon — 112×112 pixel image stored as a C array. */
 LV_IMG_DECLARE(img_app_setting);
 
 namespace esp_brookesia::apps {
+
+static void Backlight_adjustment_event_cb(lv_event_t *e) {
+  uint8_t Backlight = lv_slider_get_value((lv_obj_t *)lv_event_get_target(e));
+  if (Backlight <= 100) {
+    lv_slider_set_value(Backlight_slider, Backlight, LV_ANIM_ON);
+    bsp_display_brightness_set(Backlight);
+  } else
+    printf("Backlight out of range: %d\n", Backlight);
+}
+
 SettingsApp *SettingsApp::_instance = nullptr;
 
 SettingsApp *SettingsApp::requestInstance(bool use_status_bar,
@@ -44,6 +65,11 @@ SettingsApp::SettingsApp(bool use_status_bar, bool use_navigation_bar)
           use_status_bar, use_navigation_bar) {}
 
 SettingsApp::~SettingsApp() {}
+
+bool SettingsApp::init(void) {
+  ESP_UTILS_LOGD("Settings init()");
+  return true;
+}
 
 bool SettingsApp::run(void) {
   ESP_UTILS_LOGD("Settings run()");
@@ -96,13 +122,37 @@ bool SettingsApp::run(void) {
   lv_label_set_text(label, "Connect to Bluetooth");
 
   lv_obj_t *sub_3_page = lv_menu_page_create(menu, "Display");
-  lv_obj_set_style_text_font(sub_3_page, &lv_font_montserrat_24, 0);
 
-  cont = lv_menu_cont_create(sub_3_page);
-  label = lv_label_create(cont);
-  lv_obj_set_style_text_font(label, &lv_font_montserrat_24, 0);
-  lv_obj_set_style_text_color(label, lv_color_hex(theme::COLOR_PURE_WHITE), 0);
-  lv_label_set_text(label, "Brightness");
+  lv_obj_t *panel1 = lv_menu_cont_create(sub_3_page);
+  /* Stack the label above the slider instead of side-by-side, both
+   * left-aligned within the container. */
+  lv_obj_set_flex_flow(panel1, LV_FLEX_FLOW_COLUMN);
+  lv_obj_set_flex_align(panel1, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START,
+                        LV_FLEX_ALIGN_START);
+  lv_obj_t *Backlight_label = lv_label_create(panel1);
+  lv_label_set_text(Backlight_label, "Brightness:");
+  lv_obj_set_style_text_font(Backlight_label, &lv_font_montserrat_24, 0);
+  lv_obj_set_style_text_color(Backlight_label,
+                              lv_color_hex(theme::COLOR_PURE_WHITE), 0);
+  Backlight_slider = lv_slider_create(panel1);
+  lv_obj_add_flag(Backlight_slider, LV_OBJ_FLAG_CLICKABLE);
+  lv_obj_set_size(Backlight_slider, lv_pct(90), 30);
+  lv_obj_set_style_radius(
+      Backlight_slider, 3,
+      LV_PART_KNOB); // Adjust the value for more or less rounding
+  lv_obj_set_style_bg_opa(Backlight_slider, LV_OPA_TRANSP, LV_PART_KNOB);
+  // lv_obj_set_style_pad_all(Backlight_slider, 0, LV_PART_KNOB);
+  lv_obj_set_style_bg_color(Backlight_slider, lv_color_hex(0xAAAAAA),
+                            LV_PART_KNOB);
+  lv_obj_set_style_bg_color(Backlight_slider, lv_color_hex(0xFFFFFF),
+                            LV_PART_INDICATOR);
+  lv_obj_set_style_outline_width(Backlight_slider, 2, LV_PART_INDICATOR);
+  lv_obj_set_style_outline_color(Backlight_slider, lv_color_hex(0xD3D3D3),
+                                 LV_PART_INDICATOR);
+  lv_slider_set_range(Backlight_slider, 5, Backlight_MAX);
+  lv_slider_set_value(Backlight_slider, DEFAULT_BACKLIGHT, LV_ANIM_ON);
+  lv_obj_add_event_cb(Backlight_slider, Backlight_adjustment_event_cb,
+                      LV_EVENT_VALUE_CHANGED, NULL);
 
   /*Create a main page*/
   lv_obj_t *main_page = lv_menu_page_create(menu, NULL);
