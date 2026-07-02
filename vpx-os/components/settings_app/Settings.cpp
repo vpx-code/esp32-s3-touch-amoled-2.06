@@ -14,12 +14,11 @@
 #define ESP_UTILS_LOG_TAG "BS:Settings"
 #include "esp_lib_utils.h"
 
-#include "brookesia/lib_utils.hpp"
-#include "brookesia/service_helper/wifi.hpp"
-#include "brookesia/service_manager.hpp"
-
 #include "../main/dark/theme_constants.hpp"
 #include "Settings.hpp"
+#include "WifiPage.hpp"
+
+#include <memory>
 /* ------------------------------------------------------------------
  * App identity
  * ------------------------------------------------------------------ */
@@ -34,6 +33,10 @@ using namespace esp_brookesia::gui;
 using namespace esp_brookesia::systems;
 
 static lv_obj_t *Backlight_slider;
+
+/* Recreated each time the Settings screen is built. Assigning a fresh instance
+ * destroys the previous one, whose scoped subscriptions unsubscribe cleanly. */
+static std::unique_ptr<esp_brookesia::apps::WifiPage> wifi_page;
 
 /* Launcher icon — 112×112 pixel image stored as a C array. */
 LV_IMG_DECLARE(img_app_setting);
@@ -93,11 +96,46 @@ bool SettingsApp::run(void) {
 
   lv_obj_center(menu);
 
-  /*Modify the header*/
+  /* Header: a back arrow (no "Back" text) on the left, and the page title
+   * (Wi-Fi / BLE / Display) shown white and centered so it's actually legible.
+   * The menu keeps a single title label in the main header and only swaps its
+   * text when navigating, so styling it once here sticks for every page. */
+  lv_obj_t *header = lv_menu_get_main_header(menu);
   lv_obj_t *back_btn = lv_menu_get_main_header_back_button(menu);
-  lv_obj_t *back_button_label = lv_label_create(back_btn);
-  lv_label_set_text(back_button_label, "Back");
-  lv_obj_set_style_text_font(back_button_label, &lv_font_montserrat_32, 0);
+
+  /* The menu already ships a back arrow (an lv_image of the LV_SYMBOL_LEFT
+   * glyph, child 0 of the back button) but the theme draws it small and dim.
+   * Enlarge + whiten that original instead of adding a second arrow. */
+  lv_obj_t *back_icon = lv_obj_get_child(back_btn, 0);
+  if (back_icon != nullptr) {
+    lv_obj_set_style_text_font(back_icon, &lv_font_montserrat_32, 0);
+    lv_obj_set_style_text_color(back_icon, lv_color_hex(theme::COLOR_PURE_WHITE),
+                                0);
+    lv_obj_set_style_image_recolor(back_icon,
+                                   lv_color_hex(theme::COLOR_PURE_WHITE), 0);
+    lv_obj_set_style_image_recolor_opa(back_icon, LV_OPA_COVER, 0);
+  }
+
+  /* The built-in title is the header child that isn't the back button. */
+  lv_obj_t *header_title = nullptr;
+  for (uint32_t i = 0; i < lv_obj_get_child_count(header); i++) {
+    lv_obj_t *child = lv_obj_get_child(header, i);
+    if (child != back_btn) {
+      header_title = child;
+      break;
+    }
+  }
+  if (header_title != nullptr) {
+    lv_obj_set_style_text_font(header_title, &lv_font_montserrat_32, 0);
+    lv_obj_set_style_text_color(header_title,
+                                lv_color_hex(theme::COLOR_PURE_WHITE), 0);
+    /* Take the title out of the header's flex row and pin it to the header's
+     * centre, so it's centred across the FULL width rather than just the space
+     * beside the back button. IGNORE_LAYOUT stops flex from repositioning it;
+     * set_align is sticky, so it re-centres when the text changes per page. */
+    lv_obj_add_flag(header_title, LV_OBJ_FLAG_IGNORE_LAYOUT);
+    lv_obj_set_align(header_title, LV_ALIGN_CENTER);
+  }
 
   lv_obj_t *cont;
   lv_obj_t *label;
@@ -106,18 +144,17 @@ bool SettingsApp::run(void) {
                        // time
   lv_obj_t *sub_1_page = lv_menu_page_create(menu, "Wi-Fi");
 
-  cont = lv_menu_cont_create(sub_1_page);
-  label = lv_label_create(cont);
-  lv_obj_set_style_text_font(label, &lv_font_montserrat_24, 0);
-  lv_obj_set_style_text_color(label, lv_color_hex(theme::COLOR_PURE_WHITE), 0);
-  lv_label_set_text(label, "Scan Networks");
+  /* Fresh WifiPage each build; the previous one is destroyed here, which
+   * unsubscribes its Wi-Fi service events. */
+  wifi_page = std::make_unique<WifiPage>();
+  wifi_page->create(sub_1_page);
 
   lv_obj_t *sub_2_page =
       lv_menu_page_create(menu, "BLE"); // TODO: can we make the title bigger?
 
   cont = lv_menu_cont_create(sub_2_page);
   label = lv_label_create(cont);
-  lv_obj_set_style_text_font(label, &lv_font_montserrat_24, 0);
+  lv_obj_set_style_text_font(label, &lv_font_montserrat_32, 0);
   lv_obj_set_style_text_color(label, lv_color_hex(theme::COLOR_PURE_WHITE), 0);
   lv_label_set_text(label, "Connect to Bluetooth");
 
@@ -131,7 +168,7 @@ bool SettingsApp::run(void) {
                         LV_FLEX_ALIGN_START);
   lv_obj_t *Backlight_label = lv_label_create(panel1);
   lv_label_set_text(Backlight_label, "Brightness:");
-  lv_obj_set_style_text_font(Backlight_label, &lv_font_montserrat_24, 0);
+  lv_obj_set_style_text_font(Backlight_label, &lv_font_montserrat_32, 0);
   lv_obj_set_style_text_color(Backlight_label,
                               lv_color_hex(theme::COLOR_PURE_WHITE), 0);
   Backlight_slider = lv_slider_create(panel1);
@@ -159,21 +196,21 @@ bool SettingsApp::run(void) {
 
   cont = lv_menu_cont_create(main_page);
   label = lv_label_create(cont);
-  lv_obj_set_style_text_font(label, &lv_font_montserrat_24, 0);
+  lv_obj_set_style_text_font(label, &lv_font_montserrat_32, 0);
   lv_obj_set_style_text_color(label, lv_color_hex(theme::COLOR_PURE_WHITE), 0);
   lv_label_set_text(label, "Wi-Fi");
   lv_menu_set_load_page_event(menu, cont, sub_1_page);
 
   cont = lv_menu_cont_create(main_page);
   label = lv_label_create(cont);
-  lv_obj_set_style_text_font(label, &lv_font_montserrat_24, 0);
+  lv_obj_set_style_text_font(label, &lv_font_montserrat_32, 0);
   lv_obj_set_style_text_color(label, lv_color_hex(theme::COLOR_PURE_WHITE), 0);
   lv_label_set_text(label, "BLE");
   lv_menu_set_load_page_event(menu, cont, sub_2_page);
 
   cont = lv_menu_cont_create(main_page);
   label = lv_label_create(cont);
-  lv_obj_set_style_text_font(label, &lv_font_montserrat_24, 0);
+  lv_obj_set_style_text_font(label, &lv_font_montserrat_32, 0);
   lv_obj_set_style_text_color(label, lv_color_hex(theme::COLOR_PURE_WHITE), 0);
   lv_label_set_text(label, "Display");
   lv_menu_set_load_page_event(menu, cont, sub_3_page);
