@@ -155,10 +155,6 @@ void WifiPage::onGeneralEvent(const service::EventItemMap &items) {
     startProvisioning();
   } else if (*event == TOSTR(WifiHelper::GeneralEvent::Connected)) {
     LvGuard lock;
-    if (softap_popup_ != nullptr) {
-      lv_msgbox_close(softap_popup_);
-      softap_popup_ = nullptr;
-    }
     setStatus("Connected");
     if (info_label_ != nullptr) {
       lv_label_set_text(info_label_, "Your device is now on Wi-Fi.");
@@ -193,19 +189,8 @@ void WifiPage::onSoftApEvent(const service::EventItemMap &items) {
     if (info_label_ != nullptr) {
       lv_label_set_text(info_label_, instructions.c_str());
     }
-
-    if (softap_popup_ == nullptr) { // avoid stacking duplicate popups
-      softap_popup_ = lv_msgbox_create(lv_scr_act());
-      lv_msgbox_add_title(softap_popup_, "Set up Wi-Fi");
-      lv_msgbox_add_text(softap_popup_, instructions.c_str());
-      lv_msgbox_add_close_button(softap_popup_);
-    }
   } else if (*event == TOSTR(WifiHelper::SoftApEvent::Stopped)) {
     setStatus("Setup ended");
-    if (softap_popup_ != nullptr) {
-      lv_msgbox_close(softap_popup_);
-      softap_popup_ = nullptr;
-    }
   }
 }
 
