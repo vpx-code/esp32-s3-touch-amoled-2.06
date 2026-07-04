@@ -22,6 +22,7 @@ using namespace esp_brookesia;
 using namespace esp_brookesia::gui;
 using namespace esp_brookesia::systems::phone;
 using WifiHelper = service::helper::Wifi;
+using NVSHelper = service::helper::NVS; // to test NVS roundtrip
 
 #define LVGL_PORT_INIT_CONFIG()                                                \
   {                                                                            \
@@ -61,6 +62,29 @@ void updateWifiSignalStrengthIcon(Phone *phone) {
   } else {
     // handle disconnection or error case
     status_bar->setWifiIconState(StatusBar::WifiState::DISCONNECTED);
+  }
+}
+
+void getLastConnectedApInfoFromNVS() {
+  auto &manager = service::ServiceManager::get_instance();
+  auto service = manager.bind(WifiHelper::get_name().data()).get_service();
+  ESP_UTILS_CHECK_NULL_EXIT(service, "Wi-Fi service is null");
+
+  std::string nvs_namespace = service->get_attributes().name;
+  std::string key = "LastAp";
+
+  auto lastApInfo =
+      NVSHelper::get_key_value<WifiHelper::ConnectApInfo>(nvs_namespace, key);
+
+  if (lastApInfo) {
+    ESP_UTILS_LOGI("Got this from NVS: %s", lastApInfo->c_str());
+    // TODO: now that we have the last connected AP info, we can use it to
+    // connect to the Wi-Fi network automatically or display it in the UI.
+
+  } else {
+    ESP_UTILS_LOGE("Failed to read back from non-volatile storage: %s",
+                   lastApInfo.error().c_str());
+    return;
   }
 }
 
