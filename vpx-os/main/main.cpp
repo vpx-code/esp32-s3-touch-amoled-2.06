@@ -77,7 +77,8 @@ void getLastConnectedApInfoFromNVS() {
       NVSHelper::get_key_value<WifiHelper::ConnectApInfo>(nvs_namespace, key);
 
   if (lastApInfo) {
-    ESP_UTILS_LOGI("Got this from NVS: %s", lastApInfo->c_str());
+    ESP_UTILS_LOGI("Got this from NVS: %s - %s", lastApInfo->ssid.c_str(),
+                   lastApInfo->password.c_str());
     // TODO: now that we have the last connected AP info, we can use it to
     // connect to the Wi-Fi network automatically or display it in the UI.
 
