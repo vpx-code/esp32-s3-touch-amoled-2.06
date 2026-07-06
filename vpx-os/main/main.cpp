@@ -13,6 +13,7 @@
 #endif
 #define ESP_UTILS_LOG_TAG "Main"
 #include "./dark/stylesheet.hpp"
+#include "brookesia/service_helper/nvs.hpp"
 #include "brookesia/service_helper/wifi.hpp"
 #include "brookesia/service_manager.hpp"
 #include "esp_lib_utils.h"
@@ -77,13 +78,28 @@ void getLastConnectedApInfoFromNVS() {
       NVSHelper::get_key_value<WifiHelper::ConnectApInfo>(nvs_namespace, key);
 
   if (lastApInfo) {
-    ESP_UTILS_LOGI("Got this from NVS: %s - %s", lastApInfo->ssid.c_str(),
-                   lastApInfo->password.c_str());
+    ESP_UTILS_LOGI("RETRIEVED LAST WI-FI INFO! %s - %s",
+                   lastApInfo->ssid.c_str(), lastApInfo->password.c_str());
     // TODO: now that we have the last connected AP info, we can use it to
     // connect to the Wi-Fi network automatically or display it in the UI.
+    // WifiHelper::FunctionSetConnectApParam(lastApInfo->ssid,
+    //                                      lastApInfo->password);
+    service->call_function_async(
+        TOSTR(WifiHelper::FunctionId::SetConnectAp),
+        boost::json::object{
+            {TOSTR(WifiHelper::FunctionSetConnectApParam::SSID),
+             lastApInfo->ssid},
+            {TOSTR(WifiHelper::FunctionSetConnectApParam::Password),
+             lastApInfo->password}});
+
+    service->call_function_async( // probablyt needing to init first...
+        TOSTR(WifiHelper::FunctionId::TriggerGeneralAction),
+        boost::json::object{
+            {TOSTR(WifiHelper::FunctionTriggerGeneralActionParam::Action),
+             "Connect"}});
 
   } else {
-    ESP_UTILS_LOGE("Failed to read back from non-volatile storage: %s",
+    ESP_UTILS_LOGE("YIKES!!! Failed to read back from non-volatile storage: %s",
                    lastApInfo.error().c_str());
     return;
   }
@@ -220,6 +236,8 @@ extern "C" void app_main(void) {
 
   // Subscribe to Wi-Fi status to update status bar
   setUpWiFiService(phone);
+
+  getLastConnectedApInfoFromNVS();
 
   /* Create a timer to update the clock */
   lv_timer_create(
