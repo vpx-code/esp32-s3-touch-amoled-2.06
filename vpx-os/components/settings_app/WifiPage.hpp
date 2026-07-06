@@ -2,7 +2,6 @@
 
 #include "lvgl.h"
 
-#include "brookesia/service_helper/nvs.hpp"
 #include "brookesia/service_helper/wifi.hpp"
 #include "brookesia/service_manager.hpp"
 
@@ -33,7 +32,6 @@ public:
 
 private:
   using WifiHelper = service::helper::Wifi;
-  using NVSHelper = service::helper::NVS;
 
   void bringUp();
   void callAction(WifiHelper::GeneralAction action);

@@ -160,25 +160,6 @@ void WifiPage::onGeneralEvent(const service::EventItemMap &items) {
     if (info_label_ != nullptr) {
       lv_label_set_text(info_label_, "Your device is now on Wi-Fi.");
     }
-
-    // TODO: this is a test. we should do this in main, i'd say. this block
-    // should be deleted in the future.
-    std::string nvs_namespace = service_->get_attributes().name;
-    std::string key =
-        "LastAp"; // clueless about if it's better to access the data type
-                  // directly or just hardcode it, but i cant access it
-                  // otherwise! lets not overthink it...
-
-    auto lastApInfo =
-        NVSHelper::get_key_value<WifiHelper::ConnectApInfo>(nvs_namespace, key);
-
-    if (lastApInfo) {
-      ESP_UTILS_LOGI("Got this from NVS: %s - %s", lastApInfo->ssid.c_str(),
-                     lastApInfo->password.c_str());
-    } else {
-      ESP_UTILS_LOGE("Failed to read back from non-volatile storage");
-    }
-
   } else if (*event == TOSTR(WifiHelper::GeneralEvent::Disconnected)) {
     LvGuard lock;
     setStatus("Disconnected");

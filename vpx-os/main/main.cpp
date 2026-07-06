@@ -23,7 +23,7 @@ using namespace esp_brookesia;
 using namespace esp_brookesia::gui;
 using namespace esp_brookesia::systems::phone;
 using WifiHelper = service::helper::Wifi;
-using NVSHelper = service::helper::NVS; // to test NVS roundtrip
+using NVSHelper = service::helper::NVS;
 
 #define LVGL_PORT_INIT_CONFIG()                                                \
   {                                                                            \
