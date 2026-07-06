@@ -49,7 +49,8 @@ private:
   std::vector<service::EventRegistry::SignalConnection> connections_;
 
   lv_obj_t *status_label_ = nullptr; /*!< Top status line. */
-  lv_obj_t *info_label_ = nullptr;   /*!< Instructions shown while provisioning. */
+  lv_obj_t *info_label_ =
+      nullptr; /*!< Instructions shown while provisioning. */
   lv_obj_t *softap_popup_ = nullptr; /*!< SoftAP-provisioning message box. */
 
   bool provisioning_started_ = false; /*!< Guards against re-triggering. */

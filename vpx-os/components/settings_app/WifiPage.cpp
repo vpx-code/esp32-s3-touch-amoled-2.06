@@ -156,6 +156,7 @@ void WifiPage::onGeneralEvent(const service::EventItemMap &items) {
   } else if (*event == TOSTR(WifiHelper::GeneralEvent::Connected)) {
     LvGuard lock;
     setStatus("Connected");
+
     if (info_label_ != nullptr) {
       lv_label_set_text(info_label_, "Your device is now on Wi-Fi.");
     }
