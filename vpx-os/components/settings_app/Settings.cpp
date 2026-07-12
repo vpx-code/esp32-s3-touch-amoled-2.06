@@ -6,6 +6,7 @@
 #include "esp_brookesia.hpp"
 #include "log/esp_utils_log.h"
 #include "lvgl.h"
+#include "misc/lv_types.h"
 #include <cstdint>
 #include <cstdio>
 #include <ctime>
@@ -85,6 +86,13 @@ static void Backlight_adjustment_event_cb(lv_event_t *e) {
   if (Backlight <= 100) {
     lv_slider_set_value(Backlight_slider, Backlight, LV_ANIM_ON);
     bsp_display_brightness_set(Backlight);
+  } else
+    printf("Backlight out of range: %d\n", Backlight);
+}
+
+static void Backlight_slider_stopped_event_cb(lv_event_t *e) {
+  uint8_t Backlight = lv_slider_get_value((lv_obj_t *)lv_event_get_target(e));
+  if (Backlight <= 100) {
     save_to_nvs("backlight", Backlight);
   } else
     printf("Backlight out of range: %d\n", Backlight);
@@ -230,6 +238,9 @@ bool SettingsApp::run(void) {
   lv_slider_set_value(Backlight_slider, DEFAULT_BACKLIGHT, LV_ANIM_ON);
   lv_obj_add_event_cb(Backlight_slider, Backlight_adjustment_event_cb,
                       LV_EVENT_VALUE_CHANGED, NULL);
+
+  lv_obj_add_event_cb(Backlight_slider, Backlight_slider_stopped_event_cb,
+                      LV_EVENT_RELEASED, NULL);
 
   /*Create a main page*/
   lv_obj_t *main_page = lv_menu_page_create(menu, NULL);
