@@ -4,7 +4,9 @@
 
 #include "bsp/display.h"
 #include "esp_brookesia.hpp"
+#include "log/esp_utils_log.h"
 #include "lvgl.h"
+#include <cstdint>
 #include <cstdio>
 #include <ctime>
 
@@ -18,6 +20,8 @@
 #include "Settings.hpp"
 #include "WifiPage.hpp"
 
+#include "brookesia/service_helper/nvs.hpp"
+
 #include <memory>
 /* ------------------------------------------------------------------
  * App identity
@@ -26,11 +30,14 @@
 
 /* Backlight brightness is expressed as a percentage (0-100). */
 #define Backlight_MAX 100
-#define DEFAULT_BACKLIGHT 80
+#define DEFAULT_BACKLIGHT 50
 
 using namespace std;
+using namespace esp_brookesia;
 using namespace esp_brookesia::gui;
 using namespace esp_brookesia::systems;
+using NVSHelper = service::helper::NVS;
+const std::string NVS_NAMESPACE = "settings";
 
 static lv_obj_t *Backlight_slider;
 
@@ -43,11 +50,42 @@ LV_IMG_DECLARE(img_app_setting);
 
 namespace esp_brookesia::apps {
 
+void save_to_nvs(const std::string key, uint32_t value) {
+  auto &manager = service::ServiceManager::get_instance();
+  if (!manager.start()) {
+    ESP_UTILS_LOGE("Failed to start service manager");
+    return;
+  }
+
+  auto binding_ = manager.bind(NVSHelper::get_name().data());
+  if (!binding_.is_valid()) {
+    ESP_UTILS_LOGE("Failed to bind Wi-Fi service");
+    return;
+  }
+
+  auto service_ = binding_.get_service();
+  if (service_ == nullptr) {
+    ESP_UTILS_LOGE("Wi-Fi service is null");
+    return;
+  }
+
+  auto didSetttingSave =
+      NVSHelper::save_key_value(NVS_NAMESPACE, key, value, 100);
+
+  if (didSetttingSave.has_value()) {
+    ESP_UTILS_LOGI("Saved %s value to NVS: %d", key.c_str(), value);
+  } else {
+    ESP_UTILS_LOGE("Failed to save brightness. %s",
+                   didSetttingSave.error().c_str());
+  }
+}
+
 static void Backlight_adjustment_event_cb(lv_event_t *e) {
   uint8_t Backlight = lv_slider_get_value((lv_obj_t *)lv_event_get_target(e));
   if (Backlight <= 100) {
     lv_slider_set_value(Backlight_slider, Backlight, LV_ANIM_ON);
     bsp_display_brightness_set(Backlight);
+    save_to_nvs("backlight", Backlight);
   } else
     printf("Backlight out of range: %d\n", Backlight);
 }
@@ -71,6 +109,8 @@ SettingsApp::~SettingsApp() {}
 
 bool SettingsApp::init(void) {
   ESP_UTILS_LOGD("Settings init()");
+  auto &manager = service::ServiceManager::get_instance();
+
   return true;
 }
 
@@ -109,8 +149,8 @@ bool SettingsApp::run(void) {
   lv_obj_t *back_icon = lv_obj_get_child(back_btn, 0);
   if (back_icon != nullptr) {
     lv_obj_set_style_text_font(back_icon, &lv_font_montserrat_32, 0);
-    lv_obj_set_style_text_color(back_icon, lv_color_hex(theme::COLOR_PURE_WHITE),
-                                0);
+    lv_obj_set_style_text_color(back_icon,
+                                lv_color_hex(theme::COLOR_PURE_WHITE), 0);
     lv_obj_set_style_image_recolor(back_icon,
                                    lv_color_hex(theme::COLOR_PURE_WHITE), 0);
     lv_obj_set_style_image_recolor_opa(back_icon, LV_OPA_COVER, 0);

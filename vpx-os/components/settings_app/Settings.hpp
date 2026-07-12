@@ -1,5 +1,7 @@
 #pragma once
 
+#include "brookesia/service_helper/nvs.hpp"
+#include "brookesia/service_manager.hpp"
 #include "lvgl.h"
 #include "systems/phone/esp_brookesia_phone_app.hpp"
 
@@ -20,7 +22,12 @@ protected:
   bool back(void) override;
 
 private:
+  using NVSHelper = service::helper::NVS;
+  void save_to_nvs(const std::string key, uint32_t value);
+
   static SettingsApp *_instance;
+  service::ServiceBinding binding_;
+  std::shared_ptr<service::ServiceBase> service_;
 };
 
 } // namespace esp_brookesia::apps
