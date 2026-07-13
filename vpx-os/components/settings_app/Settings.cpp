@@ -38,6 +38,7 @@ using namespace esp_brookesia;
 using namespace esp_brookesia::gui;
 using namespace esp_brookesia::systems;
 using NVSHelper = service::helper::NVS;
+
 const std::string NVS_NAMESPACE = "settings";
 
 static lv_obj_t *Backlight_slider;
@@ -51,33 +52,12 @@ LV_IMG_DECLARE(img_app_setting);
 
 namespace esp_brookesia::apps {
 
-void save_to_nvs(const std::string key, uint32_t value) {
-  auto &manager = service::ServiceManager::get_instance();
-  if (!manager.start()) {
-    ESP_UTILS_LOGE("Failed to start service manager");
-    return;
-  }
-
-  auto binding_ = manager.bind(NVSHelper::get_name().data());
-  if (!binding_.is_valid()) {
-    ESP_UTILS_LOGE("Failed to bind Wi-Fi service");
-    return;
-  }
-
-  auto service_ = binding_.get_service();
-  if (service_ == nullptr) {
-    ESP_UTILS_LOGE("Wi-Fi service is null");
-    return;
-  }
-
-  auto didSetttingSave =
-      NVSHelper::save_key_value(NVS_NAMESPACE, key, value, 100);
-
+template <typename T> void save_to_nvs(const std::string key, T value) {
+  auto didSetttingSave = NVSHelper::save_key_value(NVS_NAMESPACE, key, value);
   if (didSetttingSave.has_value()) {
-    ESP_UTILS_LOGI("Saved %s value to NVS: %d", key.c_str(), value);
+    ESP_UTILS_LOGI("Saved %s to NVS", key.c_str());
   } else {
-    ESP_UTILS_LOGE("Failed to save brightness. %s",
-                   didSetttingSave.error().c_str());
+    ESP_UTILS_LOGE("Failed to save value. %s", didSetttingSave.error().c_str());
   }
 }
 
@@ -93,7 +73,7 @@ static void Backlight_adjustment_event_cb(lv_event_t *e) {
 static void Backlight_slider_stopped_event_cb(lv_event_t *e) {
   uint8_t Backlight = lv_slider_get_value((lv_obj_t *)lv_event_get_target(e));
   if (Backlight <= 100) {
-    save_to_nvs("backlight", Backlight);
+    save_to_nvs("brightness", Backlight);
   } else
     printf("Backlight out of range: %d\n", Backlight);
 }
@@ -117,8 +97,6 @@ SettingsApp::~SettingsApp() {}
 
 bool SettingsApp::init(void) {
   ESP_UTILS_LOGD("Settings init()");
-  auto &manager = service::ServiceManager::get_instance();
-
   return true;
 }
 
