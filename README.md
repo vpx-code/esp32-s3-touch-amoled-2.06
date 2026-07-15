@@ -1,6 +1,6 @@
 # VPX-OS
 
-A custom smartwatch firmware for the **Waveshare ESP32-S3-Touch-AMOLED-2.06**, built on
+A custom smartwatch firmware for the **[Waveshare ESP32-S3-Touch-AMOLED-2.06](https://www.waveshare.com/wiki/ESP32-S3-Touch-AMOLED-2.06)**, built on
 [ESP-Brookesia](https://github.com/espressif/esp-brookesia) and LVGL. Forked from Espressif's
 ESP-Brookesia phone demo and extended with a real settings experience, Wi-Fi provisioning,
 persistent user preferences, and a custom dark theme.
