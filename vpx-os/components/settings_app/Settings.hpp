@@ -1,5 +1,6 @@
 #pragma once
 
+#include "brookesia/service_manager.hpp"
 #include "lvgl.h"
 #include "systems/phone/esp_brookesia_phone_app.hpp"
 

@@ -4,7 +4,10 @@
 
 #include "bsp/display.h"
 #include "esp_brookesia.hpp"
+#include "log/esp_utils_log.h"
 #include "lvgl.h"
+#include "misc/lv_types.h"
+#include <cstdint>
 #include <cstdio>
 #include <ctime>
 
@@ -18,6 +21,8 @@
 #include "Settings.hpp"
 #include "WifiPage.hpp"
 
+#include "brookesia/service_helper/nvs.hpp"
+
 #include <memory>
 /* ------------------------------------------------------------------
  * App identity
@@ -26,11 +31,15 @@
 
 /* Backlight brightness is expressed as a percentage (0-100). */
 #define Backlight_MAX 100
-#define DEFAULT_BACKLIGHT 80
+#define DEFAULT_BACKLIGHT 50
 
 using namespace std;
+using namespace esp_brookesia;
 using namespace esp_brookesia::gui;
 using namespace esp_brookesia::systems;
+using NVSHelper = service::helper::NVS;
+
+const std::string NVS_NAMESPACE = "settings";
 
 static lv_obj_t *Backlight_slider;
 
@@ -43,11 +52,28 @@ LV_IMG_DECLARE(img_app_setting);
 
 namespace esp_brookesia::apps {
 
+template <typename T> void save_to_nvs(const std::string key, T value) {
+  auto didSetttingSave = NVSHelper::save_key_value(NVS_NAMESPACE, key, value);
+  if (didSetttingSave.has_value()) {
+    ESP_UTILS_LOGI("Saved %s to NVS", key.c_str());
+  } else {
+    ESP_UTILS_LOGE("Failed to save value. %s", didSetttingSave.error().c_str());
+  }
+}
+
 static void Backlight_adjustment_event_cb(lv_event_t *e) {
   uint8_t Backlight = lv_slider_get_value((lv_obj_t *)lv_event_get_target(e));
   if (Backlight <= 100) {
     lv_slider_set_value(Backlight_slider, Backlight, LV_ANIM_ON);
     bsp_display_brightness_set(Backlight);
+  } else
+    printf("Backlight out of range: %d\n", Backlight);
+}
+
+static void Backlight_slider_stopped_event_cb(lv_event_t *e) {
+  uint8_t Backlight = lv_slider_get_value((lv_obj_t *)lv_event_get_target(e));
+  if (Backlight <= 100) {
+    save_to_nvs("brightness", Backlight);
   } else
     printf("Backlight out of range: %d\n", Backlight);
 }
@@ -109,8 +135,8 @@ bool SettingsApp::run(void) {
   lv_obj_t *back_icon = lv_obj_get_child(back_btn, 0);
   if (back_icon != nullptr) {
     lv_obj_set_style_text_font(back_icon, &lv_font_montserrat_32, 0);
-    lv_obj_set_style_text_color(back_icon, lv_color_hex(theme::COLOR_PURE_WHITE),
-                                0);
+    lv_obj_set_style_text_color(back_icon,
+                                lv_color_hex(theme::COLOR_PURE_WHITE), 0);
     lv_obj_set_style_image_recolor(back_icon,
                                    lv_color_hex(theme::COLOR_PURE_WHITE), 0);
     lv_obj_set_style_image_recolor_opa(back_icon, LV_OPA_COVER, 0);
@@ -190,6 +216,9 @@ bool SettingsApp::run(void) {
   lv_slider_set_value(Backlight_slider, DEFAULT_BACKLIGHT, LV_ANIM_ON);
   lv_obj_add_event_cb(Backlight_slider, Backlight_adjustment_event_cb,
                       LV_EVENT_VALUE_CHANGED, NULL);
+
+  lv_obj_add_event_cb(Backlight_slider, Backlight_slider_stopped_event_cb,
+                      LV_EVENT_RELEASED, NULL);
 
   /*Create a main page*/
   lv_obj_t *main_page = lv_menu_page_create(menu, NULL);

@@ -8,6 +8,7 @@
 #include "bsp/esp-bsp.h"
 #include "esp_brookesia.hpp"
 #include "phone/widgets/status_bar/esp_brookesia_status_bar.hpp"
+#include <cstdint>
 #ifdef ESP_UTILS_LOG_TAG
 #undef ESP_UTILS_LOG_TAG
 #endif
@@ -32,6 +33,7 @@ using NVSHelper = service::helper::NVS;
   }
 
 #define TOSTR BROOKESIA_DESCRIBE_TO_STR
+#define SETTINGS_NVS_NAMESPACE "settings"
 
 /* The binding must outlive setUpWiFiService() so we stay bound to the service
  * for the whole program. The subscription itself is made permanent with
@@ -63,6 +65,25 @@ void updateWifiSignalStrengthIcon(Phone *phone) {
   } else {
     // handle disconnection or error case
     status_bar->setWifiIconState(StatusBar::WifiState::DISCONNECTED);
+  }
+}
+
+// using a generic because while most of the values will be numeric, not all of
+// them probably will in the future (i.e. theme name, if we don't ID it)
+// excellent refresher on generics:
+// https://www.geeksforgeeks.org/cpp/template-specialization-c/
+template <typename T> void loadSettingFromNVS(std::string key) {
+  auto nvs_value = NVSHelper::get_key_value<T>(SETTINGS_NVS_NAMESPACE, key);
+  if (!nvs_value) {
+    ESP_UTILS_LOGE("%s", nvs_value.error().c_str());
+  } else {
+    // FIXME: not the greatest implementation, but switch will only accept
+    // integers.
+    if (key == "brightness") {
+      bsp_display_brightness_set(nvs_value.value());
+      ESP_UTILS_LOGI("Set brightness to saved value: %i", nvs_value.value());
+    }
+    // TODO: add more options here when the moment comes.
   }
 }
 
@@ -238,6 +259,7 @@ extern "C" void app_main(void) {
   setUpWiFiService(phone);
 
   getLastConnectedApInfoFromNVS();
+  loadSettingFromNVS<uint32_t>("brightness");
 
   /* Create a timer to update the clock */
   lv_timer_create(
