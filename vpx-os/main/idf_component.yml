@@ -1,8 +1,10 @@
 ## IDF Component Manager Manifest File
 dependencies:
-  waveshare/esp32_s3_touch_amoled_2_06: '*'
+  waveshare/esp32_s3_touch_amoled_2_06: "*"
   espressif/esp_lvgl_port: <2.7.0
-  espressif/brookesia_service_wifi: '*'
-  espressif/brookesia_lib_utils: ^0.7.9
+  espressif/brookesia_service_wifi: "*"
+  espressif/brookesia_lib_utils: 0.7.*
   espressif/esp-boost: ^0.6.0
   espressif/brookesia_service_nvs: ^0.7.4
+  espressif/usb: "*"
+  espressif/cjson: ^1.7.19~2
