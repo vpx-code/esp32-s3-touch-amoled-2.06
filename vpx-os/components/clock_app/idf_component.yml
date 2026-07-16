@@ -2,3 +2,5 @@ version: 1.0.0
 dependencies:
   brookesia_core:
     public: true
+  espressif/brookesia_service_helper: 0.7.*
+  espressif/brookesia_service_sntp: ^0.7.2

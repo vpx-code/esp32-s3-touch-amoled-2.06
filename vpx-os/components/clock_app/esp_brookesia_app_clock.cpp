@@ -26,6 +26,7 @@
 #define ESP_UTILS_LOG_TAG "BS:Clock"
 #include "esp_lib_utils.h"
 
+#include "brookesia/service_helper/sntp.hpp"
 #include "esp_brookesia_app_clock.hpp"
 
 /* ------------------------------------------------------------------
