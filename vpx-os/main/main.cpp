@@ -15,6 +15,7 @@
 #define ESP_UTILS_LOG_TAG "Main"
 #include "./dark/stylesheet.hpp"
 #include "brookesia/service_helper/nvs.hpp"
+#include "brookesia/service_helper/sntp.hpp"
 #include "brookesia/service_helper/wifi.hpp"
 #include "brookesia/service_manager.hpp"
 #include "esp_lib_utils.h"
@@ -25,6 +26,7 @@ using namespace esp_brookesia::gui;
 using namespace esp_brookesia::systems::phone;
 using WifiHelper = service::helper::Wifi;
 using NVSHelper = service::helper::NVS;
+using SNTPHelper = service::helper::SNTP;
 
 #define LVGL_PORT_INIT_CONFIG()                                                \
   {                                                                            \
@@ -40,6 +42,7 @@ using NVSHelper = service::helper::NVS;
  * .release() below, so it needs no storage. */
 namespace {
 service::ServiceBinding g_wifi_binding;
+service::ServiceBinding g_sntp_binding;
 } // namespace
 
 esp_brookesia::systems::phone::StatusBar::WifiState
@@ -65,6 +68,50 @@ void updateWifiSignalStrengthIcon(Phone *phone) {
   } else {
     // handle disconnection or error case
     status_bar->setWifiIconState(StatusBar::WifiState::DISCONNECTED);
+  }
+}
+
+void getTimeFromSNTP() {
+
+  auto &service_manager = service::ServiceManager::get_instance();
+  service_manager.start();
+
+  // Before binding, you can check whether the Helper’s
+  // service is linked into
+  // the build
+  if (!SNTPHelper::is_available()) {
+    // Service unavailable: omitting the service component does not break
+    // compilation, but this check fails
+    return;
+  }
+
+  // Bind to the service: starts the service and its dependencies while the
+  // binding is alive. SNTP syncs asynchronously over a few seconds, so the
+  // binding must outlive this function — it is stored as a member
+  // (`_sntp_binding`) so the service keeps running after we return.
+  g_sntp_binding = service_manager.bind(SNTPHelper::get_name().data());
+  if (!g_sntp_binding.is_valid()) {
+    // Failed to start the service
+    return;
+  }
+
+  // The Servers parameter is a flat JSON array of hostname strings; the helper
+  // maps this positional argument to the schema's `Servers` parameter.
+  auto servers = SNTPHelper::call_function_sync(
+      SNTPHelper::FunctionId::SetServers,
+      boost::json::array{"es.pool.ntp.org", "hora.roa.es"});
+
+  SNTPHelper::call_function_sync(SNTPHelper::FunctionId::SetTimezone,
+                                 "CET-1CEST,M3.5.0,M10.5.0/3");
+
+  auto result = SNTPHelper::call_function_sync(SNTPHelper::FunctionId::Start);
+
+  auto isTimeSynced =
+      SNTPHelper::call_function_sync(SNTPHelper::FunctionId::IsTimeSynced);
+  if (!isTimeSynced) {
+    ESP_UTILS_LOGD("YIKES, not synced!");
+  } else {
+    ESP_UTILS_LOGD("SNTP was synced!");
   }
 }
 
@@ -185,6 +232,7 @@ void setUpWiFiService(Phone *phone) {
               // so take the GUI lock before touching the (shared)
               // status bar.
               updateWifiSignalStrengthIcon(phone);
+              getTimeFromSNTP();
             }
           })
       .release(); // make the subscription permanent; nothing to store

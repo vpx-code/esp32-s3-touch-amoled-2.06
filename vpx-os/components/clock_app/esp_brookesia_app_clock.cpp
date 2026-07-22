@@ -17,6 +17,8 @@
 #include <ctime>
 
 #include "esp_brookesia.hpp"
+#include "esp_log.h"
+
 #include "lvgl.h"
 
 /* Redefine the log tag so serial output shows "BS:Clock" instead of "Main" */
@@ -36,6 +38,7 @@
 using namespace std;
 using namespace esp_brookesia::gui;
 using namespace esp_brookesia::systems;
+using namespace esp_brookesia;
 
 /* Launcher icon — 112×112 pixel image stored as a C array.
  * Copied from brookesia_app_squareline_demo/assets/ as a temporary placeholder.
@@ -97,8 +100,8 @@ ClockApp::~ClockApp() {}
  * for the offset.
  * ------------------------------------------------------------------ */
 bool ClockApp::init(void) {
-  setenv("TZ", "CET-1CEST,M3.5.0,M10.5.0/3", 1);
-  tzset();
+  // setenv("TZ", "CET-1CEST,M3.5.0,M10.5.0/3", 1);
+  // tzset();
   return true;
 }
 
