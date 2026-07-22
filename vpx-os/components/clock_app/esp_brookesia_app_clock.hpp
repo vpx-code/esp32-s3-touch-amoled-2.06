@@ -7,8 +7,8 @@
  */
 #pragma once
 
-#include "lvgl.h"
 #include "brookesia/service_manager/service/manager.hpp"
+#include "lvgl.h"
 #include "systems/phone/esp_brookesia_phone_app.hpp"
 
 namespace esp_brookesia::apps {
@@ -82,14 +82,6 @@ private:
 
   /* Reads the system clock and updates both labels.  Called by the timer. */
   void updateDisplay(void);
-
-  void getTimeFromSNTP();
-
-  /* Keeps the SNTP service alive for the app's lifetime.  SNTP syncs
-   * asynchronously over a few seconds; if this handle were a stack local it
-   * would be destroyed on function return and stop the service before it could
-   * ever sync. */
-  service::ServiceBinding _sntp_binding;
 };
 
 } // namespace esp_brookesia::apps
