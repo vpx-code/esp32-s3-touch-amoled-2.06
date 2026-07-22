@@ -17,6 +17,8 @@
 #include <ctime>
 
 #include "esp_brookesia.hpp"
+#include "esp_log.h"
+
 #include "lvgl.h"
 
 /* Redefine the log tag so serial output shows "BS:Clock" instead of "Main" */
@@ -37,6 +39,8 @@
 using namespace std;
 using namespace esp_brookesia::gui;
 using namespace esp_brookesia::systems;
+using namespace esp_brookesia;
+using SNTPHelper = service::helper::SNTP;
 
 /* Launcher icon — 112×112 pixel image stored as a C array.
  * Copied from brookesia_app_squareline_demo/assets/ as a temporary placeholder.
@@ -98,8 +102,8 @@ ClockApp::~ClockApp() {}
  * for the offset.
  * ------------------------------------------------------------------ */
 bool ClockApp::init(void) {
-  setenv("TZ", "CET-1CEST,M3.5.0,M10.5.0/3", 1);
-  tzset();
+  // setenv("TZ", "CET-1CEST,M3.5.0,M10.5.0/3", 1);
+  // tzset();
   return true;
 }
 
@@ -149,6 +153,8 @@ bool ClockApp::run(void) {
       },
       1000, this);
 
+  getTimeFromSNTP();
+
   return true;
 }
 
@@ -177,6 +183,57 @@ void ClockApp::updateDisplay(void) {
   char date_buf[40];
   strftime(date_buf, sizeof(date_buf), "%A, %B %d %Y", &ti);
   lv_label_set_text(_date_label, date_buf);
+}
+
+void ClockApp::getTimeFromSNTP() {
+
+  auto &service_manager = service::ServiceManager::get_instance();
+  service_manager.start();
+
+  // Before binding, you can check whether the Helper’s
+  // service is linked into
+  // the build
+  if (!SNTPHelper::is_available()) {
+    // Service unavailable: omitting the service component does not break
+    // compilation, but this check fails
+    return;
+  }
+
+  // Bind to the service: starts the service and its dependencies while the
+  // binding is alive. SNTP syncs asynchronously over a few seconds, so the
+  // binding must outlive this function — it is stored as a member
+  // (`_sntp_binding`) so the service keeps running after we return.
+  _sntp_binding = service_manager.bind(SNTPHelper::get_name().data());
+  if (!_sntp_binding.is_valid()) {
+    // Failed to start the service
+    return;
+  }
+
+  // The Servers parameter is a flat JSON array of hostname strings; the helper
+  // maps this positional argument to the schema's `Servers` parameter.
+  auto servers = SNTPHelper::call_function_sync(
+      SNTPHelper::FunctionId::SetServers,
+      boost::json::array{"es.pool.ntp.org", "hora.roa.es"});
+
+  SNTPHelper::call_function_sync(SNTPHelper::FunctionId::SetTimezone,
+                                 "CET-1CEST,M3.5.0,M10.5.0/3");
+
+  auto result = SNTPHelper::call_function_sync(SNTPHelper::FunctionId::Start);
+
+  auto isTimeSynced =
+      SNTPHelper::call_function_sync(SNTPHelper::FunctionId::IsTimeSynced);
+  if (!isTimeSynced) {
+    ESP_UTILS_LOGD("YIKES, not synced!");
+  } else {
+    ESP_UTILS_LOGD("SNTP was synced!");
+  }
+
+  /*if (!servers) {
+    // Call failed, log error
+    ESP_UTILS_LOGE("Failed: %1%", result.error());
+  } else {
+    ESP_UTILS_LOGD("Servers found!");
+  }*/
 }
 
 /* ------------------------------------------------------------------
